@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">USB Serial Telnet Server</string>
+    <string name="started_please_connect">Started, please connect to:</string>
+    <string name="not_started">Not started</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="tcp_port_to_listen">TCP port to listen</string>
+    <string name="baud_rate">Baud rate</string>
+    <string name="data_bits">Data bits</string>
+    <string name="stop_bits">Stop bits</string>
+    <string name="parity">Parity</string>
     <string-array name="data_bits">
         <item>5</item>
         <item>6</item>

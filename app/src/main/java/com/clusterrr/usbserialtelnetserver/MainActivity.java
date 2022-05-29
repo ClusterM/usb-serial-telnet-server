@@ -211,9 +211,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStopBits.setSelection(prefs.getInt(SETTING_STOP_BITS, 0));
         mParity.setSelection(prefs.getInt(SETTING_PARITY, 0));
         if (started)
-             mStatus.setText("Started, please connect to: telnet://" + UsbSerialTelnetService.getIPAddress() + ": "+ mTcpPort.getText());
+             mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ": "+ mTcpPort.getText());
         else
-            mStatus.setText("Not started");
+            mStatus.setText(R.string.not_started);
     }
 
     public static Intent prepareIntentForWhiteListingOfBatteryOptimization(Context context, String packageName, boolean alsoWhenWhiteListed) {
@@ -254,5 +254,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return WhiteListedInBatteryOptimizations.ERROR_GETTING_STATE;
         return pm.isIgnoringBatteryOptimizations(packageName) ? WhiteListedInBatteryOptimizations.WHITE_LISTED : WhiteListedInBatteryOptimizations.NOT_WHITE_LISTED;
     }
-
 }
