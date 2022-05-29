@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">USB Serial Telnet Server</string>
+    <string-array name="data_bits">
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+    <string-array name="stop_bits">
+        <item>1 stop bit</item>
+        <item>1.5 stop bits</item>
+        <item>2 stop bits</item>
+    </string-array>
+    <string-array name="parity">
+        <item>None</item>
+        <item>Odd</item>
+        <item>Even</item>
+        <item>Mark</item>
+        <item>Space</item>
+    </string-array>
+</resources>
