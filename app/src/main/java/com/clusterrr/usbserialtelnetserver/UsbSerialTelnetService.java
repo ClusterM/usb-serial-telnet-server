@@ -61,11 +61,11 @@ public class UsbSerialTelnetService extends Service {
     {
         if (mStarted) {
             // Already started
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(UsbSerialTelnetService.this.getApplicationContext(), "Already started", Toast.LENGTH_LONG).show());
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(UsbSerialTelnetService.this.getApplicationContext(), getString(R.string.already_started), Toast.LENGTH_LONG).show());
             return START_STICKY;
         }
 
-        String message = getString(R.string.app_name) + " started";
+        String message = getString(R.string.app_name) + " " + getString(R.string.started);
         boolean success = false;
 
         try {
@@ -73,7 +73,7 @@ public class UsbSerialTelnetService extends Service {
             UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
             List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
             if (availableDrivers.isEmpty()) {
-                message = "Error: USB serial device not found";
+                message = getString(R.string.device_not_found);
             } else {
                 // Open a connection to the first available driver.
                 UsbSerialDriver driver = availableDrivers.get(0);
@@ -102,7 +102,7 @@ public class UsbSerialTelnetService extends Service {
             }
         }
         catch (Exception ex) {
-            message = "Error: " + ex.getMessage();
+            message = getString(R.string.error) + " " + ex.getMessage();
             ex.printStackTrace();
         }
 
@@ -137,7 +137,6 @@ public class UsbSerialTelnetService extends Service {
         if (success) {
             if (message != null)
                 Log.i(TAG, message);
-            Log.d(TAG, String.format("Local IP Address: %s", getIPAddress()));
             mStarted = true;
         } else {
             if (message != null)
@@ -186,7 +185,8 @@ public class UsbSerialTelnetService extends Service {
             mUsbSerialThread = null;
         }
         if (mStarted)
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(UsbSerialTelnetService.this.getApplicationContext(), getString(R.string.app_name) + " stopped", Toast.LENGTH_SHORT).show());
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(UsbSerialTelnetService.this.getApplicationContext(),
+                    getString(R.string.app_name) + " " + getString(R.string.stopped), Toast.LENGTH_SHORT).show());
         Log.i(TAG, "Service stopped");
         mStarted = false;
         mBinder.stopped();

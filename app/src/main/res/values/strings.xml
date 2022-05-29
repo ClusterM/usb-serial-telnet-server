@@ -9,6 +9,11 @@
     <string name="data_bits">Data bits</string>
     <string name="stop_bits">Stop bits</string>
     <string name="parity">Parity</string>
+    <string name="started">started</string>
+    <string name="device_not_found">Error: USB serial device not found</string>
+    <string name="error">Error:</string>
+    <string name="stopped">stopped</string>
+    <string name="already_started">Already started</string>
     <string-array name="data_bits">
         <item>5</item>
         <item>6</item>
