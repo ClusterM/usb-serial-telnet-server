@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.clusterrr.usbserialtelnetserver"
-        minSdk 26
+        minSdk 19
         targetSdk 32
         versionCode 1
         versionName "1.0"
