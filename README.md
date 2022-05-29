@@ -9,7 +9,7 @@ Just connect a USB serial adapter into USB OTG port of your Android device, star
 
 This method allows to use all console features like colors and special keys. So you can easyly control/install something like network devices with serial port using only your Android device.
 
-![Photo](https://user-images.githubusercontent.com/4236181/170872965-bb14d004-2c14-47fe-b0bd-ba9863f45791.jpg)
+![Photo](https://user-images.githubusercontent.com/4236181/170874522-11253639-8eb8-4a95-b70d-e875a2f2baad.jpg)
 
 ## Compatible Devices
 This app uses [usb-serial-for-android  library by mik3y](https://github.com/mik3y/usb-serial-for-android) and supports USB to serial converter chips:
