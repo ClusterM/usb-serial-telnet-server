@@ -22,28 +22,19 @@ import androidx.core.app.NotificationCompat;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
-import com.hoho.android.usbserial.util.SerialInputOutputManager;
 
 import java.io.IOException;
 import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
-import java.net.SocketAddress;
-import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.List;
 
 public class UsbSerialTelnetService extends Service {
     final static String TAG = "UsbSerialTelnet";
-    final static String KEY_NEED_TO_START = "need_to_start";
-//    final static String START_INTENT = "com.clusterrr.usbserialtelnetserver.START";
-//    final static String STOP_INTENT = "com.clusterrr.usbserialtelnetserver.STOP";
-//    final static String STARTED_INTENT = "com.clusterrr.usbserialtelnetserver.STARTED";
-//    final static String STOPPED_INTENT = "com.clusterrr.usbserialtelnetserver.STOPPED";
+    final static String ACTION_NEED_TO_START = "need_to_start";
     final static String KEY_TCP_PORT = "tcp_port";
     final static String KEY_BAUD_RATE = "baud_rate";
     final static String KEY_DATA_BITS = "data_bits";
@@ -90,8 +81,7 @@ public class UsbSerialTelnetService extends Service {
                 if (connection == null) {
                     message = null; // "Please grant permission and try again";
                     Intent mainActivityStartIntent = new Intent(this, MainActivity.class);
-                    mainActivityStartIntent.putExtra(KEY_NEED_TO_START, true);
-                    mainActivityStartIntent.setAction(KEY_NEED_TO_START);
+                    mainActivityStartIntent.setAction(ACTION_NEED_TO_START);
                     PendingIntent mainActivityStartPendingIntent = PendingIntent.getActivity(this, 0, mainActivityStartIntent, PendingIntent.FLAG_IMMUTABLE);
                     manager.requestPermission(driver.getDevice(), mainActivityStartPendingIntent);
                 } else {
@@ -128,7 +118,7 @@ public class UsbSerialTelnetService extends Service {
         }
         Notification notification = new NotificationCompat.Builder(this, TAG)
                 .setOngoing(true)
-                .setSmallIcon(R.mipmap.ic_notification)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

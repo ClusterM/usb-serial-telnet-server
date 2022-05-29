@@ -1,13 +1,9 @@
 package com.clusterrr.usbserialtelnetserver;
 
-import static android.hardware.usb.UsbManager.EXTRA_PERMISSION_GRANTED;
-import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +29,6 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 
-import java.text.ParseException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, UsbSerialTelnetService.IOnStopListener {
@@ -71,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent serviceIntent = new Intent(this, UsbSerialTelnetService.class);
         bindService(serviceIntent, serviceConnection, 0); // in case it's service already started
-        Intent intent = getIntent();
-        //if (intent != null) onNewIntent(intent);
 
         updateSettings();
     }
@@ -81,7 +74,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (intent != null) {
-            if (intent.getBooleanExtra(UsbSerialTelnetService.KEY_NEED_TO_START, false)) {
+            // Start service if need
+            if ((intent.getAction() == UsbSerialTelnetService.ACTION_NEED_TO_START) &&
+                    (!(mServiceBinder != null && mServiceBinder.isStarted()))) {
                 // Test that permission is granted
                 UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
                 List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
