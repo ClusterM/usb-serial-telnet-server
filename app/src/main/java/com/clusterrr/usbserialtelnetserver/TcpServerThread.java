@@ -13,9 +13,10 @@ public class TcpServerThread extends Thread {
     private UsbSerialTelnetService mUsbSerialTelnetService;
     private ServerSocket mTcpServer;
     private List<TcpClientThread> mClients;
+    private boolean mNoLocalEcho = true;
+    private boolean mRemoveLf = true;
 
-    public TcpServerThread(UsbSerialTelnetService usbSerialTelnetService, ServerSocket tcpServer)
-    {
+    public TcpServerThread(UsbSerialTelnetService usbSerialTelnetService, ServerSocket tcpServer) {
         mUsbSerialTelnetService = usbSerialTelnetService;
         mTcpServer = tcpServer;
         mClients = new ArrayList<>();
@@ -29,14 +30,14 @@ public class TcpServerThread extends Thread {
                 Socket socket = mTcpServer.accept();
                 Log.i(UsbSerialTelnetService.TAG, "Connected: " + socket.getRemoteSocketAddress());
                 TcpClientThread client = new TcpClientThread(mUsbSerialTelnetService, this, socket);
+                client.setNoLocalEcho(mNoLocalEcho);
+                client.setRemoveLf(mRemoveLf);
                 client.start();
                 mClients.add(client);
             }
-        }
-        catch (SocketException e) {
+        } catch (SocketException e) {
             Log.i(UsbSerialTelnetService.TAG, "Server: " + e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         close();
@@ -56,8 +57,7 @@ public class TcpServerThread extends Thread {
         for (TcpClientThread client : mClients) {
             try {
                 client.write(data, offset, len);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 toRemove.add(client);
             }
@@ -68,8 +68,7 @@ public class TcpServerThread extends Thread {
         }
     }
 
-    public void close()
-    {
+    public void close() {
         try {
             if (mTcpServer != null) {
                 mTcpServer.close();
@@ -81,11 +80,18 @@ public class TcpServerThread extends Thread {
         for (TcpClientThread client : mClients) {
             try {
                 client.close();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         mClients.clear();
+    }
+
+    public void setNoLocalEcho(boolean noLocalEcho) {
+        mNoLocalEcho = noLocalEcho;
+    }
+
+    public void setRemoveLf(boolean removeLf) {
+        mRemoveLf = removeLf;
     }
 }

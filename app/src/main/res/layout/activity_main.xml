@@ -169,6 +169,46 @@
                 app:layout_constraintStart_toEndOf="@+id/textViewParity"
                 app:layout_constraintTop_toBottomOf="@+id/spinnerStopBits" />
 
+            <TextView
+                android:id="@+id/textNoLocalEcho"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/no_local_echo"
+                app:layout_constraintBottom_toBottomOf="@+id/switchNoLocalEcho"
+                app:layout_constraintEnd_toStartOf="@+id/switchNoLocalEcho"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/switchNoLocalEcho" />
+
+            <Switch
+                android:id="@+id/switchNoLocalEcho"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textNoLocalEcho"
+                app:layout_constraintTop_toBottomOf="@+id/spinnerParity" />
+
+            <TextView
+                android:id="@+id/textRemoveLf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/remove_lf"
+                app:layout_constraintBottom_toBottomOf="@+id/switchRemoveLf"
+                app:layout_constraintEnd_toStartOf="@+id/switchRemoveLf"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/switchRemoveLf" />
+
+            <Switch
+                android:id="@+id/switchRemoveLf"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textRemoveLf"
+                app:layout_constraintTop_toBottomOf="@+id/switchNoLocalEcho" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

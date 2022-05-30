@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final static String SETTING_DATA_BITS = "data_bits";
     final static String SETTING_STOP_BITS = "stop_bits";
     final static String SETTING_PARITY = "parity";
+    final static String SETTING_NO_LOCAL_ECHO = "no_local_echo";
+    final static String SETTING_REMOVE_LF = "remove_lf";
 
     UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
     Button mStartButton;
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Spinner mStopBits;
     Spinner mParity;
     TextView mStatus;
+    Switch mNoLocalEcho;
+    Switch mRemoveLF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStopBits = findViewById(R.id.spinnerStopBits);
         mParity = findViewById(R.id.spinnerParity);
         mStatus = findViewById(R.id.textViewStatus);
+        mNoLocalEcho = findViewById(R.id.switchNoLocalEcho);
+        mRemoveLF = findViewById(R.id.switchRemoveLf);
 
         mStartButton.setOnClickListener(this);
         mStopButton.setOnClickListener(this);
@@ -133,7 +140,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_PARITY, prefs.getInt(SETTING_PARITY, 0));
-        startForegroundService(serviceIntent);
+        serviceIntent.putExtra(UsbSerialTelnetService.KEY_NO_LOCAL_ECHO, prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
+        serviceIntent.putExtra(UsbSerialTelnetService.KEY_REMOVE_LF, prefs.getBoolean(SETTING_REMOVE_LF, true));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
         bindService(serviceIntent, serviceConnection, 0);
     }
 
@@ -187,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .putInt(SETTING_DATA_BITS, mDataBits.getSelectedItemPosition())
                 .putInt(SETTING_STOP_BITS, mStopBits.getSelectedItemPosition())
                 .putInt(SETTING_PARITY, mParity.getSelectedItemPosition())
+                .putBoolean(SETTING_NO_LOCAL_ECHO, mNoLocalEcho.isChecked())
+                .putBoolean(SETTING_REMOVE_LF, mRemoveLF.isChecked())
                 .commit();
     }
 
@@ -200,11 +215,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDataBits.setEnabled(!started);
         mStopBits.setEnabled(!started);
         mParity.setEnabled(!started);
+        mNoLocalEcho.setEnabled(!started);
+        mRemoveLF.setEnabled(!started);
         mTcpPort.setText(String.valueOf(prefs.getInt(SETTING_TCP_PORT, 2323)));
         mBaudRate.setText(String.valueOf(prefs.getInt(SETTING_BAUD_RATE, 115200)));
         mDataBits.setSelection(prefs.getInt(SETTING_DATA_BITS, 3));
         mStopBits.setSelection(prefs.getInt(SETTING_STOP_BITS, 0));
         mParity.setSelection(prefs.getInt(SETTING_PARITY, 0));
+        mNoLocalEcho.setChecked(prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
+        mRemoveLF.setChecked(prefs.getBoolean(SETTING_REMOVE_LF, true));
         if (started)
              mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":"+ mTcpPort.getText());
         else

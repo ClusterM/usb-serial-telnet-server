@@ -14,6 +14,8 @@
     <string name="error">Error:</string>
     <string name="stopped">stopped</string>
     <string name="already_started">Already started</string>
+    <string name="no_local_echo">Forced local echo off</string>
+    <string name="remove_lf">Convert client\'s CR-LF to CR</string>
     <string-array name="data_bits">
         <item>5</item>
         <item>6</item>

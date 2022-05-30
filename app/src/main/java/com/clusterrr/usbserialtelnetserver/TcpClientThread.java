@@ -18,6 +18,16 @@ public class TcpClientThread extends Thread {
     private OutputStream mDataOutputStream;
     private String mAddress;
     private List<Byte> mBuffer;
+    private boolean mNoLocalEcho = true;
+    private boolean mRemoveLf = true;
+    private byte mLastChar = 0;
+
+    final static byte CMD_WILL = (byte) 0xFB;
+    final static byte CMD_WONT = (byte) 0xFC;
+    final static byte CMD_DO = (byte) 0xFD;
+    final static byte CMD_DONT = (byte) 0xFE;
+    final static byte OP_ECHO = (byte) 1;
+    final static byte OP_SUPPRESS = (byte) 3;
 
     public TcpClientThread(UsbSerialTelnetService usbSerialTelnetService, TcpServerThread tcpServerThread, Socket socket) throws IOException {
         mUsbSerialTelnetService = usbSerialTelnetService;
@@ -34,9 +44,13 @@ public class TcpClientThread extends Thread {
         byte buffer[] = new byte[1024];
 
         try {
-            mDataOutputStream.write(new byte[]{(byte) 0xFF, (byte) 0xFD, (byte) 0x03}); // Do Suppress Go Ahead
-            mDataOutputStream.write(new byte[]{(byte) 0xFF, (byte) 0xFB, (byte) 0x03}); // Will Suppress Go Ahead
-            mDataOutputStream.write(new byte[]{(byte) 0xFF, (byte) 0xFB, (byte) 0x01}); // Will Echo
+            if (mNoLocalEcho) {
+                mDataOutputStream.write(new byte[]{(byte) 0xFF, CMD_WILL, OP_ECHO}); // Will Echo
+                mDataOutputStream.write(new byte[]{(byte) 0xFF, CMD_DONT, OP_ECHO}); // Don't Echo
+                mDataOutputStream.write(new byte[]{(byte) 0xFF, CMD_DO, OP_SUPPRESS}); // Do Suppress Go Ahead
+                mDataOutputStream.write(new byte[]{(byte) 0xFF, CMD_WILL, OP_SUPPRESS}); // Will Suppress Go Ahead
+            }
+
             while (true) {
                 if (mDataInputStream == null) break;
                 int l = mDataInputStream.read(buffer);
@@ -74,21 +88,17 @@ public class TcpClientThread extends Thread {
         for (; i < len; i++) {
             byte b = mBuffer.get(i);
             if (b == 0) continue;
-            if (b == '\n') continue;
-            /*
-            if ((b == '\r') && ((i >= len) || (mBuffer.get(i + 1) == '\n'))) {
-                // skip \r\n
-                if (true)
-                    continue;
+            if (mRemoveLf && mLastChar == '\r' && b == '\n') {
+                // remove LF if need
+                mLastChar = '\n';
+                continue;
             }
-             */
             if (b == (byte)0xFF) {
                 if (i >= len) break;
                 byte next = mBuffer.get(i + 1);
                 if (next == (byte)0xFF) {
                     // just 0xFF
-                    //mUsbSerialTelnetService.writePort((byte) 0xFF);
-                    output[outputSize++] = (byte)0xFF;
+                    output[outputSize++] = mLastChar = (byte)0xFF;
                     i++;
                     continue;
                 }
@@ -96,13 +106,13 @@ public class TcpClientThread extends Thread {
                 if (i + 1 >= len) break;
                 byte cmd = next;
                 byte opt = mBuffer.get(i + 2);
-                Log.d(UsbSerialTelnetService.TAG, "Telnet command: CMD=" + Integer.toHexString(cmd >= 0 ? cmd : cmd + 256) + " ARG=" + Integer.toHexString(opt >= 0 ? opt : opt + 256));
+                Log.d(UsbSerialTelnetService.TAG, "Telnet command: CMD=" + (cmd >= 0 ? cmd : cmd + 256) + " ARG=" + (opt >= 0 ? opt : opt + 256));
                 i += 2;
                 continue;
             }
             // just data
-            //mUsbSerialTelnetService.writePort(b);
-            output[outputSize++] = b;
+            output[outputSize++] = mLastChar = b;
+            mLastChar = b;
         }
 
         // Remove proceeded
@@ -140,5 +150,13 @@ public class TcpClientThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setNoLocalEcho(boolean noLocalEcho) {
+        mNoLocalEcho = noLocalEcho;
+    }
+
+    public void setRemoveLf(boolean removeLf) {
+        mRemoveLf = removeLf;
     }
 }
