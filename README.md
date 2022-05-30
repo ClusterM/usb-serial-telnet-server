@@ -5,7 +5,7 @@ Just connect a USB serial adapter into USB OTG port of your Android device, star
 * [JuiceSSH](https://play.google.com/store/apps/details?id=com.sonelli.juicessh) using the same Android device (connect to localhost)
 * Telnet client on a computer on the same network (connect over Wi-Fi)
 
-![Screenshot](https://user-images.githubusercontent.com/4236181/170873697-077b8c7a-51e9-4480-bba7-4871280834dc.png)
+![Screenshot](https://user-images.githubusercontent.com/4236181/170989042-b82958ff-372b-4733-bbcb-ce98ebf331fc.png)
 
 This method allows to use all console features like colors and special keys. So you can easyly control/install something like network devices with serial port using only your Android device.
 
