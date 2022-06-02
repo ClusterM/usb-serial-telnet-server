@@ -24,8 +24,12 @@ and devices implementing the CDC/ACM protocol like
 * BBC micro:bit using ARM mbed DAPLink firmware
 * ...
 
+## Download on Google Play
+
+https://play.google.com/store/apps/details?id=com.clusterrr.usbserialtelnetserver
+
 ## Contacts
 * My site (Russian): https://clusterrr.com
 * Email: clusterrr@clusterrr.com
 * Telegram: https://t.me/Cluster_M
-* Donations: https://www.donationalerts.com/r/clustermeerkat
+* Donate: https://www.donationalerts.com/r/clustermeerkat
