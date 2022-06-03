@@ -2,8 +2,6 @@ package com.clusterrr.usbserialtelnetserver;
 
 import android.util.Log;
 
-import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.primitives.Bytes;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -121,7 +119,12 @@ public class TcpClientThread extends Thread {
         mBuffer.subList(0, i).clear();
 
         // And finally write data to the port
-        mUsbSerialTelnetService.writeSerialPort(Bytes.toArray(output));
+        //mUsbSerialTelnetService.writeSerialPort(Bytes.toArray(output)); // Guava lib make app too large :(
+        byte[] outputPrimitive = new byte[output.size()];
+        for (i = 0; i < outputPrimitive.length; i++)
+            outputPrimitive[i] = output.get(i);
+        mUsbSerialTelnetService.writeSerialPort(outputPrimitive);
+
     }
 
     public void write(byte[] data) throws IOException {
@@ -141,7 +144,12 @@ public class TcpClientThread extends Thread {
                 output.add((byte)0xFF);
             }
         }
-        mDataOutputStream.write(Bytes.toArray(output));
+
+        // mDataOutputStream.write(Bytes.toArray(output)); // Guava lib make app too large :(
+        byte[] outputPrimitive = new byte[output.size()];
+        for (int i = 0; i < outputPrimitive.length; i++)
+            outputPrimitive[i] = output.get(i);
+        mDataOutputStream.write(outputPrimitive);
     }
 
     public void close() {
