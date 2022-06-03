@@ -2,6 +2,8 @@ package com.clusterrr.usbserialtelnetserver;
 
 import android.util.Log;
 
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.primitives.Bytes;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -83,8 +85,7 @@ public class TcpClientThread extends Thread {
     private void proceedBuffer() throws IOException {
         int len = mBuffer.size();
         int i = 0;
-        byte[] output = new byte[len];
-        int outputSize = 0;
+        List<Byte> output = new ArrayList<>();
         for (; i < len; i++) {
             byte b = mBuffer.get(i);
             if (b == 0) continue;
@@ -98,7 +99,8 @@ public class TcpClientThread extends Thread {
                 byte next = mBuffer.get(i + 1);
                 if (next == (byte)0xFF) {
                     // just 0xFF
-                    output[outputSize++] = mLastChar = (byte)0xFF;
+                    output.add((byte)0xFF);
+                    mLastChar = (byte)0xFF;
                     i++;
                     continue;
                 }
@@ -111,15 +113,15 @@ public class TcpClientThread extends Thread {
                 continue;
             }
             // just data
-            output[outputSize++] = mLastChar = b;
+            output.add(b);
             mLastChar = b;
         }
 
         // Remove proceeded
-        for (int j = 0; j < i; j++)
-            mBuffer.remove(0);
+        mBuffer.subList(0, i).clear();
 
-        mUsbSerialTelnetService.writeSerialPort(output, 0, outputSize);
+        // And finally write data to the port
+        mUsbSerialTelnetService.writeSerialPort(Bytes.toArray(output));
     }
 
     public void write(byte[] data) throws IOException {
@@ -127,29 +129,39 @@ public class TcpClientThread extends Thread {
     }
 
     public void write(byte[] data, int offset, int len) throws IOException {
-        if (mDataOutputStream != null)
-            mDataOutputStream.write(data, offset, len);
-        //Log.d(UsbSerialTelnetService.TAG, "Writing " + len + " bytes to TCP");
+        if (mDataOutputStream == null) return;
+        List<Byte> output = new ArrayList<>();
+        for (int i = 0; i < len; i++){
+            byte b = data[offset + i];
+            if (b != (byte)0xFF) {
+                output.add(b);
+            } else {
+                // Escape 0xFF
+                output.add((byte)0xFF);
+                output.add((byte)0xFF);
+            }
+        }
+        mDataOutputStream.write(Bytes.toArray(output));
     }
 
     public void close() {
         try {
             if (mSocket != null) {
                 mSocket.close();
-                mSocket = null;
             }
             if (mDataOutputStream != null) {
                 mDataOutputStream.close();
-                mDataOutputStream = null;
             }
             if (mDataInputStream != null)
             {
                 mDataInputStream.close();
-                mDataInputStream = null;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        mSocket = null;
+        mDataOutputStream = null;
+        mDataInputStream = null;
     }
 
     public void setNoLocalEcho(boolean noLocalEcho) {

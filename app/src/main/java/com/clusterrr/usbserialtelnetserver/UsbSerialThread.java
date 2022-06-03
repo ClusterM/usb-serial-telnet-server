@@ -26,8 +26,10 @@ public class UsbSerialThread extends Thread {
         try {
             while (true) {
                 if (mSerialPort == null) break;
+                // Read data
                 int l = mSerialPort.read(buffer, 0);
                 if (l <= 0) break; // disconnect
+                // Write data
                 mUsbSerialTelnetService.writeClients(buffer, 0, l);
             }
         }
@@ -49,12 +51,11 @@ public class UsbSerialThread extends Thread {
 
     public void close() {
         try {
-            if (mSerialPort != null) {
+            if (mSerialPort != null)
                 mSerialPort.close();
-                mSerialPort = null;
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        mSerialPort = null;
     }
 }

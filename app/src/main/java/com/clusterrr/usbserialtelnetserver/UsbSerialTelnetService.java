@@ -218,9 +218,13 @@ public class UsbSerialTelnetService extends Service {
 
     public void writeSerialPort(byte[] buffer, int pos, int len) throws IOException {
         if (mUsbSerialThread == null) return;
-        byte[] writeBuffer = new byte[len];
-        System.arraycopy(buffer, pos, writeBuffer, 0, len);
-        mUsbSerialThread.write(writeBuffer);
+        if ((pos != 0) || (buffer.length != len)) {
+            byte[] writeBuffer = new byte[len];
+            System.arraycopy(buffer, pos, writeBuffer, 0, len);
+            mUsbSerialThread.write(writeBuffer);
+        } else {
+            mUsbSerialThread.write(buffer);
+        }
     }
 
     public void writeClients(byte[] buffer) throws IOException {

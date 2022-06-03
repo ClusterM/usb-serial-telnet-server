@@ -70,13 +70,12 @@ public class TcpServerThread extends Thread {
 
     public void close() {
         try {
-            if (mTcpServer != null) {
+            if (mTcpServer != null)
                 mTcpServer.close();
-                mTcpServer = null;
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        mTcpServer = null;
         for (TcpClientThread client : mClients) {
             try {
                 client.close();
