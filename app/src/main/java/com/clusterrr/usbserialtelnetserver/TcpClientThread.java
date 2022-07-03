@@ -93,7 +93,7 @@ public class TcpClientThread extends Thread {
                 continue;
             }
             if (b == (byte)0xFF) {
-                if (i >= len) break;
+                if (i + 1 >= len) break;
                 byte next = mBuffer.get(i + 1);
                 if (next == (byte)0xFF) {
                     // just 0xFF
@@ -103,7 +103,7 @@ public class TcpClientThread extends Thread {
                     continue;
                 }
                 // Command
-                if (i + 1 >= len) break;
+                if (i + 2 >= len) break;
                 byte cmd = next;
                 byte opt = mBuffer.get(i + 2);
                 Log.d(UsbSerialTelnetService.TAG, "Telnet command: CMD=" + (cmd >= 0 ? cmd : cmd + 256) + " ARG=" + (opt >= 0 ? opt : opt + 256));
