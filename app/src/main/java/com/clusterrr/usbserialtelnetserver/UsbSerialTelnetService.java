@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -42,6 +43,7 @@ public class UsbSerialTelnetService extends Service {
     final static String KEY_PARITY = "parity";
     final static String KEY_NO_LOCAL_ECHO = "no_local_echo";
     final static String KEY_REMOVE_LF = "remove_lf";
+    final static String KEY_LAST_STATE = "last_state";
 
     boolean mStarted = false;
     //UsbSerialPort mSerialPort = null;

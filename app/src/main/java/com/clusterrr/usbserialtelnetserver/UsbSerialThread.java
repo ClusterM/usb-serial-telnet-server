@@ -1,5 +1,9 @@
 package com.clusterrr.usbserialtelnetserver;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -13,10 +17,12 @@ public class UsbSerialThread extends Thread {
 
     private UsbSerialTelnetService mUsbSerialTelnetService;
     private UsbSerialPort mSerialPort;
+    private Handler mHandler;
 
     public UsbSerialThread(UsbSerialTelnetService usbSerialTelnetService, UsbSerialPort serialPort) {
         mUsbSerialTelnetService = usbSerialTelnetService;
         mSerialPort = serialPort;
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -35,9 +41,11 @@ public class UsbSerialThread extends Thread {
         }
         catch (IOException e) {
             Log.i(UsbSerialTelnetService.TAG, "Serial port: " + e.getMessage());
+            markStopped();
         }
         catch (Exception e) {
             e.printStackTrace();
+            markStopped();
         }
         close();
         Log.i(UsbSerialTelnetService.TAG, "Serial port closed");
@@ -57,5 +65,11 @@ public class UsbSerialThread extends Thread {
             e.printStackTrace();
         }
         mSerialPort = null;
+    }
+
+    private void markStopped()
+    {
+        SharedPreferences prefs = mUsbSerialTelnetService.getApplicationContext().getSharedPreferences(mUsbSerialTelnetService.getString(R.string.app_name), Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false).commit();
     }
 }

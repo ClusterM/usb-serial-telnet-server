@@ -15,7 +15,9 @@ import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -41,22 +43,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final static String SETTING_NO_LOCAL_ECHO = "no_local_echo";
     final static String SETTING_REMOVE_LF = "remove_lf";
 
-    UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
-    Button mStartButton;
-    Button mStopButton;
-    EditText mTcpPort;
-    EditText mBaudRate;
-    Spinner mDataBits;
-    Spinner mStopBits;
-    Spinner mParity;
-    TextView mStatus;
-    Switch mNoLocalEcho;
-    Switch mRemoveLF;
+    private UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
+    private Handler mHandler;
+    private Button mStartButton;
+    private Button mStopButton;
+    private EditText mTcpPort;
+    private EditText mBaudRate;
+    private Spinner mDataBits;
+    private Spinner mStopBits;
+    private Spinner mParity;
+    private TextView mStatus;
+    private Switch mNoLocalEcho;
+    private Switch mRemoveLF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mHandler = new Handler(Looper.getMainLooper());
+
         mStartButton = findViewById(R.id.buttonStart);
         mStopButton = findViewById(R.id.buttonStop);
         mTcpPort = findViewById(R.id.editTextTcpPort);
@@ -75,6 +81,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bindService(serviceIntent, serviceConnection, 0); // in case it's service already started
 
         updateSettings();
+
+        boolean started = mServiceBinder != null && mServiceBinder.isStarted();
+        if (!started) {
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+            boolean needToStart = prefs.getBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false);
+            if (needToStart) start();
+        }
     }
 
     @Override
@@ -154,6 +167,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent serviceIntent = new Intent(this, UsbSerialTelnetService.class);
         stopService(serviceIntent);
         mServiceBinder = null;
+        mHandler.postDelayed(() -> {
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+            prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false).commit();
+        }, 50);
         updateSettings();
     }
 
@@ -164,6 +181,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mServiceBinder = (UsbSerialTelnetService.ServiceBinder) service;
             mServiceBinder.setOnStopListener(MainActivity.this);
             updateSettings();
+            mHandler.postDelayed(() -> {
+                boolean started = mServiceBinder != null && mServiceBinder.isStarted();
+                SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+                prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, started).commit();
+            }, 50);
             Log.d(UsbSerialTelnetService.TAG, "Service connected");
         }
 
@@ -225,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mNoLocalEcho.setChecked(prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
         mRemoveLF.setChecked(prefs.getBoolean(SETTING_REMOVE_LF, true));
         if (started)
-             mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":"+ mTcpPort.getText());
+            mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":"+ mTcpPort.getText());
         else
             mStatus.setText(R.string.not_started);
     }
