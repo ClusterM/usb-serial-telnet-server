@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Base64;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -25,7 +24,7 @@ public class WebSocketService {
   public void start() {
     // handshake
     try {
-        doHandShakeToInitializeWebSocketConnection(inputStream, outputStream);
+      doHandShakeToInitializeWebSocketConnection(inputStream, outputStream);
     } catch (Exception exception) {
       throw new IllegalStateException("Could not connect to client input stream", exception);
     }
@@ -57,8 +56,12 @@ public class WebSocketService {
   }
 
   public void sendMessage(String message) {
-    outputStream.write(encode(message));
-    outputStream.flush();
+    try {
+      outputStream.write(encode(message));
+      outputStream.flush();
+    } catch (Exception exception) {
+      throw new IllegalStateException("Write output stream failed", exception);
+    }
   }
 
   //Source for encoding and decoding:
@@ -195,12 +198,12 @@ public class WebSocketService {
     if (get.find()) {
       Matcher match = Pattern.compile("Sec-WebSocket-Key: (.*)").matcher(data);
       match.find();
-      byte[] response = ("HTTP/1.1 101 Switching Protocols\r\n"
-      + "Connection: Upgrade\r\n"
-      + "Upgrade: websocket\r\n"
-      + "Sec-WebSocket-Accept: "
-      + Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest((match.group(1) + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").getBytes("UTF-8")))
-      + "\r\n\r\n").getBytes("UTF-8");
+      byte[] response = ("HTTP/1.1 101 Switching Protocols\r\n" +
+        "Connection: Upgrade\r\n" +
+        "Upgrade: websocket\r\n" +
+        "Sec-WebSocket-Accept: " +
+        Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest((match.group(1) + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").getBytes("UTF-8"))) +
+        "\r\n\r\n").getBytes("UTF-8");
       outputStream.write(response, 0, response.length);
     }
   }
