@@ -26,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.hoho.android.usbserial.driver.CdcAcmSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
@@ -84,9 +85,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Start service if need
             if ((intent.getAction() == UsbSerialTelnetService.ACTION_NEED_TO_START) &&
                     (!(mServiceBinder != null && mServiceBinder.isStarted()))) {
+                // build custom prober
+                ProbeTable customTable = new ProbeTable();
+                int vendorId = 0x0403;
+                int productId = 0xCC4D;
+                customTable.addProduct(vendorId, productId, CdcAcmSerialDriver.class);
+                UsbSerialProber prober = new UsbSerialProber(customTable);
                 // Test that permission is granted
                 UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-                List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
+                List<UsbSerialDriver> availableDrivers = prober.findAllDrivers(manager);
                 if (!availableDrivers.isEmpty()) {
                     UsbSerialDriver driver = availableDrivers.get(0);
                     UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
