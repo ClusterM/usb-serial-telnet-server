@@ -58,9 +58,10 @@ public class WebSocketService {
     }
   }
 
-  public void sendMessage(String message) {
+  public void sendMessage(String messageHex) {
     try {
-      outputStream.write(encode(message));
+      Log.i(UsbSerialTelnetService.TAG, "Writing to socket: " + messageHex);
+      outputStream.write(encode(messageHex));
       outputStream.flush();
     } catch (Exception exception) {
       throw new IllegalStateException("Write output stream failed", exception);
