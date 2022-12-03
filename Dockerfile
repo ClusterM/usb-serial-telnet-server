@@ -21,4 +21,9 @@ ENV GRADLE_PATH=/opt/gradle-7.3.2/bin
 ENV PATH=$PATH:$ANDROID_HOME:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS:$ANDROID_NDK_HOME:$GRADLE_PATH
 # docker run --rm -it -v $(pwd):/mnt 32032a83e2c3 bash
 # gradle assembleDebug
-# output will be at ls app/build/outputs/apk/debug/UsbSerialTelnetServer-v7-221203-193345.apk
+# adb devices
+# adb uninstall com.clusterrr.usbserialtelnetserver
+# adb install app/build/outputs/apk/debug/UsbSerialTelnetServer-v7-221203-193345.apk
+# adb shell monkey -p com.clusterrr.usbserialtelnetserver 1
+# adb logcat
+# python -m http.server --directory examples/ 8080

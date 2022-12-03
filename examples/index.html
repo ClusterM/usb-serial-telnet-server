@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+  </head>
+  <body>
+    <script type="text/javascript">
+      const run = async () => {
+        const socket = new WebSocket('ws://192.168.0.83:2323') // Galaxy-Tab-A7-Lite.local
+        console.log('opening...')
+        await new Promise(resolve => socket.addEventListener('open', resolve))
+        console.log('opened')
+        socket.addEventListener('message', (event) => {
+          console.log(event)
+        })
+        await delay(1000)
+        socket.send('61747A') // atz
+      }
+
+      run()
+    </script>
+  </body>
+</html>
