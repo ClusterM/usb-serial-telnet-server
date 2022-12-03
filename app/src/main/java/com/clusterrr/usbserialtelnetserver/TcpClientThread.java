@@ -51,13 +51,11 @@ public class TcpClientThread extends Thread {
         }
     }
 
-    @Override
     public void runWebSocket() {
         mWebSocketService = new WebSocketService(mDataInputStream, mDataOutputStream, mUsbSerialTelnetService);
         mWebSocketService.start();
     }
 
-    @Override
     public void runTelnet() {
         byte buffer[] = new byte[1024];
 
