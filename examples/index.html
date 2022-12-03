@@ -4,6 +4,8 @@
   </head>
   <body>
     <script type="text/javascript">
+      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+      
       const run = async () => {
         const socket = new WebSocket('ws://192.168.0.83:2323') // Galaxy-Tab-A7-Lite.local
         console.log('opening...')

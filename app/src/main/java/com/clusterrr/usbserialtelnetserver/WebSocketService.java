@@ -1,5 +1,6 @@
 package com.clusterrr.usbserialtelnetserver;
 
+import android.util.Log;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -49,6 +50,7 @@ public class WebSocketService {
   private void onMessageReceived(String messageHex) {
     try {
       // TODO: hex to binary or something?
+      Log.i(UsbSerialTelnetService.TAG, "Writing to serial port: " + messageHex);
       byte[] messageBytes = hexStringToByteArray(messageHex);
       usbSerialTelnetService.writeSerialPort(messageBytes);
     } catch (Exception exception) {
