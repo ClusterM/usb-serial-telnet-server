@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class WebSocketService {
   private InputStream inputStream = null;
@@ -23,9 +24,17 @@ public class WebSocketService {
 
   public void start() {
     // handshake
-    doHandShakeToInitializeWebSocketConnection(inputStream, outputStream);
+    try {
+        doHandShakeToInitializeWebSocketConnection(inputStream, outputStream);
+    } catch (Exception exception) {
+      throw new IllegalStateException("Could not connect to client input stream", exception);
+    }
     // input stream
-    handleInputStream(inputStream);
+    try {
+      handleInputStream(inputStream);
+    } catch (Exception exception) {
+      throw new IllegalStateException("Handle input stream failed", exception);
+    }
   }
 
   private byte[] hexStringToByteArray(String s) {
@@ -38,9 +47,13 @@ public class WebSocketService {
   }
 
   private void onMessageReceived(String messageHex) {
-    // TODO: hex to binary or something?
-    byte[] messageBytes = hexStringToByteArray(messageHex);
-    usbSerialTelnetService.writeSerialPort(messageBytes);
+    try {
+      // TODO: hex to binary or something?
+      byte[] messageBytes = hexStringToByteArray(messageHex);
+      usbSerialTelnetService.writeSerialPort(messageBytes);
+    } catch (Exception exception) {
+      throw new IllegalStateException("Write serial port failed", exception);
+    }
   }
 
   public void sendMessage(String message) {
@@ -176,7 +189,7 @@ public class WebSocketService {
     return reply;
   }
 
-  private static void doHandShakeToInitializeWebSocketConnection(InputStream inputStream, OutputStream outputStream) throws UnsupportedEncodingException {
+  private static void doHandShakeToInitializeWebSocketConnection(InputStream inputStream, OutputStream outputStream) throws UnsupportedEncodingException, NoSuchAlgorithmException, IOException {
     String data = new Scanner(inputStream, "UTF-8").useDelimiter("\\r\\n\\r\\n").next();
     Matcher get = Pattern.compile("^GET").matcher(data);
     if (get.find()) {
