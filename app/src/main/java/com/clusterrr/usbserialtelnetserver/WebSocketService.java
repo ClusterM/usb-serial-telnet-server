@@ -38,20 +38,11 @@ public class WebSocketService {
     }
   }
 
-  private byte[] hexStringToByteArray(String s) {
-    int len = s.length();
-    byte[] data = new byte[len / 2];
-    for (int i = 0; i < len; i += 2) {
-      data[i / 2] = (byte)((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
-    }
-    return data;
-  }
-
   private void onMessageReceived(String messageHex) {
     try {
       // TODO: hex to binary or something?
       Log.i(UsbSerialTelnetService.TAG, "Writing to serial port: " + messageHex);
-      byte[] messageBytes = hexStringToByteArray(messageHex);
+      byte[] messageBytes = Utilities.hexStringToByteArray(messageHex);
       usbSerialTelnetService.writeSerialPort(messageBytes);
     } catch (Exception exception) {
       throw new IllegalStateException("Write serial port failed", exception);

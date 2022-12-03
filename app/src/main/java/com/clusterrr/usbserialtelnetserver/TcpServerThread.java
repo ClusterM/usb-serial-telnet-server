@@ -29,7 +29,8 @@ public class TcpServerThread extends Thread {
                 if (mTcpServer == null) break;
                 Socket socket = mTcpServer.accept();
                 Log.i(UsbSerialTelnetService.TAG, "Connected: " + socket.getRemoteSocketAddress());
-                TcpClientThread client = new TcpClientThread(mUsbSerialTelnetService, this, socket);
+                String mode = "websocket"; // breaking change; use telnet if you want telnet?
+                TcpClientThread client = new TcpClientThread(mUsbSerialTelnetService, this, socket, mode);
                 client.setNoLocalEcho(mNoLocalEcho);
                 client.setRemoveLf(mRemoveLf);
                 client.start();
