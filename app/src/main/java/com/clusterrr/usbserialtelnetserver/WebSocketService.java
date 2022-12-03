@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.bind.DatatypeConverter;
+import java.security.MessageDigest;
 
 public class WebSocketService {
   private InputStream inputStream = null;
