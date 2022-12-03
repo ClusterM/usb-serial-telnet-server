@@ -1,3 +1,5 @@
+package com.clusterrr.usbserialtelnetserver;
+
 public class UsbProberHelper {
   public static UsbSerialProber buildProberWithCustomTable() {
      ProbeTable customTable = new ProbeTable();

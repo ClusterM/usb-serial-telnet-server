@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     (!(mServiceBinder != null && mServiceBinder.isStarted()))) {
                 // Test that permission is granted
                 UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-                List<UsbSerialDriver> availableDrivers = buildProberWithCustomTable().findAllDrivers(manager);
+                List<UsbSerialDriver> availableDrivers = UsbProberHelper.buildProberWithCustomTable().findAllDrivers(manager);
                 if (!availableDrivers.isEmpty()) {
                     UsbSerialDriver driver = availableDrivers.get(0);
                     UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
