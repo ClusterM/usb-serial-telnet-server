@@ -1,5 +1,9 @@
 package com.clusterrr.usbserialtelnetserver;
 
+import com.hoho.android.usbserial.driver.UsbSerialProber;
+import com.hoho.android.usbserial.driver.ProbeTable;
+import com.hoho.android.usbserial.driver.CdcAcmSerialDriver;
+
 public class UsbProberHelper {
   public static UsbSerialProber buildProberWithCustomTable() {
      ProbeTable customTable = new ProbeTable();
