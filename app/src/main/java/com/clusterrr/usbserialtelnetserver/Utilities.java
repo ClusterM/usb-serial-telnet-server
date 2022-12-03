@@ -1,6 +1,6 @@
 package com.clusterrr.usbserialtelnetserver;
 
-public static class Utilities {
+public class Utilities {
   public static String byteArrayToHexString(byte[] bytes, int offset, int len) {
     char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     char[] hexChars = new char[len * 2];
