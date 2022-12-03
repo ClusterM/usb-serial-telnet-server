@@ -34,22 +34,14 @@ https://play.google.com/store/apps/details?id=com.clusterrr.usbserialtelnetserve
 * Telegram: https://t.me/Cluster_M
 * Donate: https://www.donationalerts.com/r/clustermeerkat
 
-## Docker
+## Docker + adb Usage Example
 
-```dockerfile
-FROM androidsdk/android-31
-# install deps
-RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/lists/*
-# download r25 ndk
-WORKDIR /opt
-RUN wget https://dl.google.com/android/repository/android-ndk-r25b-linux.zip # 25.1.8937393
-RUN unzip android-ndk-r25b-linux.zip
-RUN rm android-ndk-r25b-linux.zip
-# set env vars
-ENV ANDROID_NDK_ROOT=/opt/android-ndk-r25b
-ENV ANDROID_NDK_HOME=/opt/android-ndk-r25b
-ENV ANDROID_HOME=/opt/android-sdk-linux
-ENV ANDROID_TOOLS=/opt/android-sdk-linux/tools/bin
-ENV ANDROID_PLATFORM_TOOLS=/opt/android-sdk-linux/platform-tools
-ENV PATH=$PATH:$ANDROID_HOME:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS:$ANDROID_NDK_HOME
+```shell
+docker build -t android-builder:0.0.1 .
+docker run --rm -it -v $(pwd):/mnt android-builder:0.0.1 bash "cd /mnt && gradle assembleDebug"
+adb uninstall com.clusterrr.usbserialtelnetserver
+adb install ~/Desktop/UsbSerialTelnetServer-*.apk # from app/build/outputs/apk/debug/UsbSerialTelnetServer-*.apk
+adb shell monkey -p com.clusterrr.usbserialtelnetserver 1
+adb logcat
+python -m http.server --directory examples/ 8080
 ```

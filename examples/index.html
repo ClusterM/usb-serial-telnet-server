@@ -12,10 +12,14 @@
         await new Promise(resolve => socket.addEventListener('open', resolve))
         console.log('opened')
         socket.addEventListener('message', (event) => {
-          console.log(event)
+          console.log(event.data)
         })
-        await delay(1000)
-        socket.send('61747A0D0A') // atz\r\n
+        for (;;) {
+          socket.send('61747A0D0A') // atz\r\n
+          await delay(100)
+          socket.send('6174690D0A') // ati\r\n
+          await delay(100)
+        }
       }
 
       run()
