@@ -86,15 +86,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Start service if need
             if ((intent.getAction() == UsbSerialTelnetService.ACTION_NEED_TO_START) &&
                     (!(mServiceBinder != null && mServiceBinder.isStarted()))) {
-                // build custom prober
-                ProbeTable customTable = new ProbeTable();
-                int vendorId = 0x0403;
-                int productId = 0xCC4D;
-                customTable.addProduct(vendorId, productId, CdcAcmSerialDriver.class);
-                UsbSerialProber prober = new UsbSerialProber(customTable);
                 // Test that permission is granted
                 UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-                List<UsbSerialDriver> availableDrivers = prober.findAllDrivers(manager);
+                List<UsbSerialDriver> availableDrivers = buildProberWithCustomTable().findAllDrivers(manager);
                 if (!availableDrivers.isEmpty()) {
                     UsbSerialDriver driver = availableDrivers.get(0);
                     UsbDeviceConnection connection = manager.openDevice(driver.getDevice());

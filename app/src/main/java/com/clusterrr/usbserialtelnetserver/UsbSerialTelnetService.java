@@ -74,15 +74,9 @@ public class UsbSerialTelnetService extends Service {
 
         try {
             // Find all available drivers from attached devices.
-            // build custom prober
-            ProbeTable customTable = new ProbeTable();
-            int vendorId = 0x0403;
-            int productId = 0xCC4D;
-            customTable.addProduct(vendorId, productId, CdcAcmSerialDriver.class);
-            UsbSerialProber prober = new UsbSerialProber(customTable);
             // Test that permission is granted
             UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-            List<UsbSerialDriver> availableDrivers = prober.findAllDrivers(manager);
+            List<UsbSerialDriver> availableDrivers = UsbProberHelper.buildProberWithCustomTable().findAllDrivers(manager);
             if (availableDrivers.isEmpty()) {
                 message = getString(R.string.device_not_found);
             } else {

@@ -44,4 +44,5 @@ adb install ~/Desktop/UsbSerialTelnetServer-*.apk # from app/build/outputs/apk/d
 adb shell monkey -p com.clusterrr.usbserialtelnetserver 1
 adb logcat
 python -m http.server --directory examples/ 8080
+# go to http://localhost:8080 in browser
 ```
