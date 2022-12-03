@@ -33,3 +33,23 @@ https://play.google.com/store/apps/details?id=com.clusterrr.usbserialtelnetserve
 * Email: clusterrr@clusterrr.com
 * Telegram: https://t.me/Cluster_M
 * Donate: https://www.donationalerts.com/r/clustermeerkat
+
+## Docker
+
+```dockerfile
+FROM androidsdk/android-31
+# install deps
+RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/lists/*
+# download r25 ndk
+WORKDIR /opt
+RUN wget https://dl.google.com/android/repository/android-ndk-r25b-linux.zip # 25.1.8937393
+RUN unzip android-ndk-r25b-linux.zip
+RUN rm android-ndk-r25b-linux.zip
+# set env vars
+ENV ANDROID_NDK_ROOT=/opt/android-ndk-r25b
+ENV ANDROID_NDK_HOME=/opt/android-ndk-r25b
+ENV ANDROID_HOME=/opt/android-sdk-linux
+ENV ANDROID_TOOLS=/opt/android-sdk-linux/tools/bin
+ENV ANDROID_PLATFORM_TOOLS=/opt/android-sdk-linux/platform-tools
+ENV PATH=$PATH:$ANDROID_HOME:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS:$ANDROID_NDK_HOME
+```

@@ -1,11 +1,20 @@
 package com.clusterrr.usbserialtelnetserver;
 
-public class WebSocketServer {
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.xml.bind.DatatypeConverter;
+
+public class WebSocketService {
   private InputStream inputStream = null;
   private OutputStream outputStream = null;
   private UsbSerialTelnetService usbSerialTelnetService = null;
 
-  public WebSocketServer(InputStream inputStream, OutputStream outputStream, Function usbSerialTelnetService) {
+  public WebSocketService(InputStream inputStream, OutputStream outputStream, UsbSerialTelnetService usbSerialTelnetService) {
     this.inputStream = inputStream;
     this.outputStream = outputStream;
     this.usbSerialTelnetService = usbSerialTelnetService;
@@ -13,20 +22,27 @@ public class WebSocketServer {
 
   public void start() {
     // handshake
-    try {
-      doHandShakeToInitializeWebSocketConnection(inputStream, outputStream);
-    } catch (UnsupportedEncodingException handShakeException) {
-      throw new IllegalStateException("Could not connect to client input stream", handShakeException);
-    }
+    doHandShakeToInitializeWebSocketConnection(inputStream, outputStream);
     // input stream
     handleInputStream(inputStream);
   }
 
-  private void onMessageReceived(String message) {
-    mUsbSerialTelnetService.writeSerialPort(Bytes.toArray(message));
+  private byte[] hexStringToByteArray(String s) {
+    int len = s.length();
+    byte[] data = new byte[len / 2];
+    for (int i = 0; i < len; i += 2) {
+      data[i / 2] = (byte)((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
+    }
+    return data;
   }
 
-  private void sendMessage(String message) {
+  private void onMessageReceived(String messageHex) {
+    // TODO: hex to binary or something?
+    byte[] messageBytes = hexStringToByteArray(messageHex);
+    usbSerialTelnetService.writeSerialPort(messageBytes);
+  }
+
+  public void sendMessage(String message) {
     outputStream.write(encode(message));
     outputStream.flush();
   }
