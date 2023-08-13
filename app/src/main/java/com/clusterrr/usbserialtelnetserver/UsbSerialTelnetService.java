@@ -70,6 +70,30 @@ public class UsbSerialTelnetService extends Service {
         }
 
         String message = getString(R.string.app_name) + " " + getString(R.string.started);
+
+        Intent mainActivityIntent = new Intent(this, MainActivity.class);
+        PendingIntent mainActivityPendingIntent = PendingIntent.getActivity(this, 0, mainActivityIntent, PendingIntent.FLAG_IMMUTABLE);
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(TAG,
+                    getString(R.string.app_name),
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(getString(R.string.app_name));
+            nm.createNotificationChannel(channel);
+        }
+        Notification notification = new NotificationCompat.Builder(this, TAG)
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
+                .setContentTitle(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .setShowWhen(false)
+                .setContentIntent(mainActivityPendingIntent)
+                .build();
+
+        startForeground(1, notification);
+
         boolean success = false;
 
         try {
@@ -112,33 +136,10 @@ public class UsbSerialTelnetService extends Service {
             ex.printStackTrace();
         }
 
-        Intent mainActivityIntent = new Intent(this, MainActivity.class);
-        PendingIntent mainActivityPendingIntent = PendingIntent.getActivity(this, 0, mainActivityIntent, PendingIntent.FLAG_IMMUTABLE);
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(TAG,
-                    getString(R.string.app_name),
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(getString(R.string.app_name));
-            nm.createNotificationChannel(channel);
-        }
-        Notification notification = new NotificationCompat.Builder(this, TAG)
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
-                .setContentTitle(message)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .setShowWhen(false)
-                .setContentIntent(mainActivityPendingIntent)
-                .build();
-
         if (message != null) {
             final String msg = message;
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(UsbSerialTelnetService.this.getApplicationContext(), msg, Toast.LENGTH_SHORT).show());
         }
-
-        startForeground(1, notification);
 
         if (success) {
             if (message != null)

@@ -17,7 +17,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         boolean needToStart = prefs.getBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false);
         if (needToStart) {
             Intent mainActivityStartIntent = new Intent(context, MainActivity.class);
-            mainActivityStartIntent.setAction(UsbSerialTelnetService.ACTION_NEED_TO_START);
+            context.startActivity(mainActivityStartIntent);
         }
     }
 }

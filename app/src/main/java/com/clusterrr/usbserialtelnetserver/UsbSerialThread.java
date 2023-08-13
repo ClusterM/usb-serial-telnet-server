@@ -22,7 +22,7 @@ public class UsbSerialThread extends Thread {
     public UsbSerialThread(UsbSerialTelnetService usbSerialTelnetService, UsbSerialPort serialPort) {
         mUsbSerialTelnetService = usbSerialTelnetService;
         mSerialPort = serialPort;
-        mHandler = new Handler(Looper.getMainLooper());
+        mHandler = new Handler();
     }
 
     @Override

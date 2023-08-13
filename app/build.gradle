@@ -3,14 +3,14 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.clusterrr.usbserialtelnetserver"
         minSdk 19
-        targetSdk 32
-        versionCode 7
-        versionName "1.4"
+        targetSdk 33
+        versionCode 8
+        versionName "1.5"
     }
 
     buildTypes {
@@ -24,8 +24,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'com.clusterrr.usbserialtelnetserver'
 
-    applicationVariants.all { variant ->
+    applicationVariants.configureEach { variant ->
         variant.outputs.all { output ->
             def formattedDate = new Date().format('yyMMdd-HHmmss')
             outputFileName = "UsbSerialTelnetServer-v${defaultConfig.versionCode}-${formattedDate}.apk"
@@ -34,8 +35,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.6.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation 'com.github.mik3y:usb-serial-for-android:3.4.3'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
 }

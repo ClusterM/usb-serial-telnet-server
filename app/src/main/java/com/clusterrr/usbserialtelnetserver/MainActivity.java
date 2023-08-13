@@ -17,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -56,12 +55,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Switch mNoLocalEcho;
     private Switch mRemoveLF;
 
+    private boolean isStarted() {
+        return mServiceBinder != null && mServiceBinder.isStarted();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mHandler = new Handler(Looper.getMainLooper());
+        mHandler = new Handler();
 
         mStartButton = findViewById(R.id.buttonStart);
         mStopButton = findViewById(R.id.buttonStop);
@@ -78,15 +81,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStopButton.setOnClickListener(this);
 
         Intent serviceIntent = new Intent(this, UsbSerialTelnetService.class);
-        bindService(serviceIntent, serviceConnection, 0); // in case it's service already started
+        bindService(serviceIntent, serviceConnection, 0); // in case if service already started
 
         updateSettings();
 
-        boolean started = mServiceBinder != null && mServiceBinder.isStarted();
-        if (!started) {
-            SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-            boolean needToStart = prefs.getBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false);
-            if (needToStart) start();
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        boolean needToStart = prefs.getBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false);
+        if (needToStart) {
+            mHandler.postDelayed(() -> {
+                boolean started = mServiceBinder != null && mServiceBinder.isStarted();
+                if (!started) {
+                    start();
+                }
+            }, 5000);
         }
     }
 
@@ -161,16 +168,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startService(serviceIntent);
         }
         bindService(serviceIntent, serviceConnection, 0);
+
+        // Save last state
+        mHandler.postDelayed(() -> {
+            boolean started = mServiceBinder != null && mServiceBinder.isStarted();
+            SharedPreferences prefsShared = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+            prefsShared.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, started).commit();
+            Log.d(UsbSerialTelnetService.TAG, "Last state saved: " + started);
+        }, 500);
     }
 
     private void stop() {
         Intent serviceIntent = new Intent(this, UsbSerialTelnetService.class);
         stopService(serviceIntent);
         mServiceBinder = null;
-        mHandler.postDelayed(() -> {
-            SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-            prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false).commit();
-        }, 50);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false).commit();
         updateSettings();
     }
 
@@ -181,11 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mServiceBinder = (UsbSerialTelnetService.ServiceBinder) service;
             mServiceBinder.setOnStopListener(MainActivity.this);
             updateSettings();
-            mHandler.postDelayed(() -> {
-                boolean started = mServiceBinder != null && mServiceBinder.isStarted();
-                SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-                prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, started).commit();
-            }, 50);
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+            prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, isStarted()).commit();
             Log.d(UsbSerialTelnetService.TAG, "Service connected");
         }
 
