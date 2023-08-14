@@ -209,6 +209,27 @@
                 app:layout_constraintStart_toEndOf="@+id/textRemoveLf"
                 app:layout_constraintTop_toBottomOf="@+id/switchNoLocalEcho" />
 
+            <TextView
+                android:id="@+id/textAutostart"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/autostart_on_device_connect"
+                app:layout_constraintBottom_toBottomOf="@+id/spinnerAutostart"
+                app:layout_constraintEnd_toStartOf="@+id/spinnerAutostart"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/spinnerAutostart" />
+
+            <Spinner
+                android:id="@+id/spinnerAutostart"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="24dp"
+                android:entries="@array/autostart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textAutostart"
+                app:layout_constraintTop_toBottomOf="@+id/switchRemoveLf" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

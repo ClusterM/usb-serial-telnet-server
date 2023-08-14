@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -65,7 +64,7 @@ public class UsbSerialTelnetService extends Service {
     {
         if (mStarted) {
             // Already started
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(UsbSerialTelnetService.this.getApplicationContext(), getString(R.string.already_started), Toast.LENGTH_LONG).show());
+            //new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(UsbSerialTelnetService.this.getApplicationContext(), getString(R.string.already_started), Toast.LENGTH_LONG).show());
             return START_STICKY;
         }
 
@@ -86,10 +85,11 @@ public class UsbSerialTelnetService extends Service {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(message)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setShowWhen(false)
                 .setContentIntent(mainActivityPendingIntent)
+                .setSound(null)
                 .build();
 
         startForeground(1, notification);
@@ -145,12 +145,14 @@ public class UsbSerialTelnetService extends Service {
             if (message != null)
                 Log.i(TAG, message);
             mStarted = true;
+            mBinder.started();
         } else {
             if (message != null)
                 Log.e(TAG, message);
             stopSelf();
             mStarted = false;
         }
+
         return START_STICKY;
     }
 
@@ -201,16 +203,18 @@ public class UsbSerialTelnetService extends Service {
 
     private final ServiceBinder mBinder = new ServiceBinder();
     public class ServiceBinder extends Binder {
-        private IOnStopListener onStopListener = null;
+        private IOnStartStopListener onStartStopListener = null;
         public boolean isStarted()
         {
             return mStarted;
         }
-        public void setOnStopListener(IOnStopListener listener) { onStopListener = listener; }
-        public void stopped() { if (onStopListener != null) onStopListener.usbSerialServiceStopped(); }
+        public void setOnStartStopListener(IOnStartStopListener listener) { onStartStopListener = listener; }
+        public void started() { if (onStartStopListener != null) onStartStopListener.usbSerialServiceStarted(); }
+        public void stopped() { if (onStartStopListener != null) onStartStopListener.usbSerialServiceStopped(); }
     }
-    public interface IOnStopListener
+    public interface IOnStartStopListener
     {
+        public void usbSerialServiceStarted();
         public void usbSerialServiceStopped();
     }
 

@@ -16,6 +16,7 @@
     <string name="already_started">Already started</string>
     <string name="no_local_echo">Forced local echo off</string>
     <string name="remove_lf">Convert client\'s CR-LF to CR</string>
+    <string name="autostart_on_device_connect">Autostart on device attach</string>
     <string-array name="data_bits">
         <item>5</item>
         <item>6</item>
@@ -34,5 +35,10 @@
         <item>Even</item>
         <item>Mark</item>
         <item>Space</item>
+    </string-array>
+    <string-array name="autostart">
+        <item>Disabled</item>
+        <item>Enabled</item>
+        <item>+Autoclose</item>
     </string-array>
 </resources>

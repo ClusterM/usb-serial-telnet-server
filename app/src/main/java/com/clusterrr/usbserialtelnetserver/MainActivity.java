@@ -21,6 +21,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -33,7 +34,7 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, UsbSerialTelnetService.IOnStopListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, UsbSerialTelnetService.IOnStartStopListener, AdapterView.OnItemSelectedListener {
     final static String SETTING_TCP_PORT = "tcp_port";
     final static String SETTING_BAUD_RATE = "baud_rate";
     final static String SETTING_DATA_BITS = "data_bits";
@@ -41,9 +42,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final static String SETTING_PARITY = "parity";
     final static String SETTING_NO_LOCAL_ECHO = "no_local_echo";
     final static String SETTING_REMOVE_LF = "remove_lf";
+    final static String SETTING_AUTOSTART = "autostart";
+
+    final static int AUTOSTART_DISABLED = 0;
+    final static int AUTOSTART_ENABLED = 1;
+    final static int AUTOSTART_CLOSE = 2;
 
     private UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
-    private Handler mHandler;
+    private Handler mHandler = new Handler();
+    private boolean mNeedClose = false;
     private Button mStartButton;
     private Button mStopButton;
     private EditText mTcpPort;
@@ -54,17 +61,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView mStatus;
     private Switch mNoLocalEcho;
     private Switch mRemoveLF;
+    private Spinner mAutostart;
 
-    private boolean isStarted() {
+    public boolean isStarted() {
         return mServiceBinder != null && mServiceBinder.isStarted();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(UsbSerialTelnetService.TAG, "Creating activity");
         setContentView(R.layout.activity_main);
-
-        mHandler = new Handler();
 
         mStartButton = findViewById(R.id.buttonStart);
         mStopButton = findViewById(R.id.buttonStop);
@@ -76,44 +83,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStatus = findViewById(R.id.textViewStatus);
         mNoLocalEcho = findViewById(R.id.switchNoLocalEcho);
         mRemoveLF = findViewById(R.id.switchRemoveLf);
+        mAutostart = findViewById(R.id.spinnerAutostart);
 
+        mAutostart.setOnItemSelectedListener(this);
         mStartButton.setOnClickListener(this);
         mStopButton.setOnClickListener(this);
 
         Intent serviceIntent = new Intent(this, UsbSerialTelnetService.class);
-        bindService(serviceIntent, serviceConnection, 0); // in case if service already started
+        bindService(serviceIntent, mServiceConnection, 0); // in case if service already started
 
         updateSettings();
-
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-        boolean needToStart = prefs.getBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false);
-        if (needToStart) {
-            mHandler.postDelayed(() -> {
-                boolean started = mServiceBinder != null && mServiceBinder.isStarted();
-                if (!started) {
-                    start();
-                }
-            }, 5000);
-        }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
+        // Start service if need
         super.onNewIntent(intent);
-        if (intent != null) {
-            // Start service if need
-            if ((intent.getAction() == UsbSerialTelnetService.ACTION_NEED_TO_START) &&
-                    (!(mServiceBinder != null && mServiceBinder.isStarted()))) {
-                // Test that permission is granted
-                UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-                List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
-                if (!availableDrivers.isEmpty()) {
-                    UsbSerialDriver driver = availableDrivers.get(0);
-                    UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
-                    if (connection != null) start();
+        if (intent == null) return;
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        String action = intent.getAction();
+        Log.d(UsbSerialTelnetService.TAG, "Received intent: " + action);
+        switch(action)
+        {
+            case UsbSerialTelnetService.ACTION_NEED_TO_START:
+                if (mServiceBinder == null || !mServiceBinder.isStarted())
+                    start();
+                break;
+            case Intent.ACTION_BOOT_COMPLETED:
+            case UsbManager.ACTION_USB_DEVICE_ATTACHED:
+                if (!isStarted() && prefs.getInt(SETTING_AUTOSTART, AUTOSTART_DISABLED) != AUTOSTART_DISABLED)
+                {
+                    mNeedClose = prefs.getInt(SETTING_AUTOSTART, AUTOSTART_DISABLED) == AUTOSTART_CLOSE;
+                    start();
                 }
-            }
+                break;
         }
+    }
+
+    public static boolean isDevicePresent(Context context)
+    {
+        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
+        if (!availableDrivers.isEmpty()) {
+            UsbSerialDriver driver = availableDrivers.get(0);
+            UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
+            return connection != null;
+        }
+        return false;
     }
 
     @Override
@@ -128,12 +144,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(view.getId())
         {
             case R.id.buttonStart:
+                mNeedClose = false;
                 start();
                 break;
             case R.id.buttonStop:
                 stop();
                 break;
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (parent.getId() != R.id.spinnerAutostart) return;
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        prefs.edit()
+                .putInt(SETTING_AUTOSTART, position)
+                .commit();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Unused
     }
 
     private void start() {
@@ -144,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (ignoreOptimization != null) startActivity(ignoreOptimization);
 
         Intent serviceIntent = new Intent(this, UsbSerialTelnetService.class);
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_TCP_PORT, prefs.getInt(SETTING_TCP_PORT, 2323));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_BAUD_RATE, prefs.getInt(SETTING_BAUD_RATE, 115200));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_DATA_BITS, prefs.getInt(SETTING_DATA_BITS, 3) + 5);
@@ -167,15 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             startService(serviceIntent);
         }
-        bindService(serviceIntent, serviceConnection, 0);
-
-        // Save last state
-        mHandler.postDelayed(() -> {
-            boolean started = mServiceBinder != null && mServiceBinder.isStarted();
-            SharedPreferences prefsShared = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-            prefsShared.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, started).commit();
-            Log.d(UsbSerialTelnetService.TAG, "Last state saved: " + started);
-        }, 500);
+        bindService(serviceIntent, mServiceConnection, 0);
     }
 
     private void stop() {
@@ -187,16 +210,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateSettings();
     }
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             mServiceBinder = (UsbSerialTelnetService.ServiceBinder) service;
-            mServiceBinder.setOnStopListener(MainActivity.this);
+            mServiceBinder.setOnStartStopListener(MainActivity.this);
             updateSettings();
             SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
             prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, isStarted()).commit();
             Log.d(UsbSerialTelnetService.TAG, "Service connected");
+            // Close if autoclose enabled
+            if (isStarted() && mNeedClose) {
+                // Delay to prevent race condition
+                mHandler.postDelayed(() -> {
+                    if (mNeedClose) finish();
+                }, 1000);
+            }
         }
 
         @Override
@@ -207,11 +237,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     @Override
+    public void usbSerialServiceStarted() {
+    }
+
+    @Override
     public void usbSerialServiceStopped() {
         updateSettings();
     }
+
     private void saveSettings() {
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         int tcpPort;
         try {
             tcpPort = Integer.parseInt(mTcpPort.getText().toString());
@@ -238,8 +273,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateSettings() {
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-        boolean started = mServiceBinder != null && mServiceBinder.isStarted();
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        boolean started = isStarted();
         mStartButton.setEnabled(!started);
         mStopButton.setEnabled(started);
         mTcpPort.setEnabled(!started);
@@ -256,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mParity.setSelection(prefs.getInt(SETTING_PARITY, 0));
         mNoLocalEcho.setChecked(prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
         mRemoveLF.setChecked(prefs.getBoolean(SETTING_REMOVE_LF, true));
+        mAutostart.setSelection(prefs.getInt(SETTING_AUTOSTART, AUTOSTART_DISABLED));
         if (started)
             mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":"+ mTcpPort.getText());
         else
