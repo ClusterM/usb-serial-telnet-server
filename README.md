@@ -37,5 +37,5 @@ https://play.google.com/store/apps/details?id=com.clusterrr.usbserialtelnetserve
 
 ## Contacts
 * My site (Russian): https://clusterrr.com
-* Email: clusterrr@clusterrr.com
+* Email: cluster@cluster.wtf
 * Telegram: https://t.me/Cluster_M
