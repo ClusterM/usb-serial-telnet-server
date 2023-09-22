@@ -17,6 +17,7 @@
     <string name="no_local_echo">Forced local echo off</string>
     <string name="remove_lf">Convert client\'s CR-LF to CR</string>
     <string name="autostart_on_device_connect">Autostart on device attach</string>
+    <string name="local_only">Local Connections Only</string>
     <string-array name="data_bits">
         <item>5</item>
         <item>6</item>

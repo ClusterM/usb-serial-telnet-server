@@ -61,6 +61,26 @@
             android:layout_gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/textLocalOnly"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/local_only"
+                app:layout_constraintBottom_toBottomOf="@+id/switchLocalOnly"
+                app:layout_constraintEnd_toStartOf="@+id/switchLocalOnly"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/switchLocalOnly" />
+
+            <Switch
+                android:id="@+id/switchLocalOnly"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textLocalOnly"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
                 android:id="@+id/textViewTcpPort"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -81,7 +101,7 @@
                 android:maxLength="5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textViewTcpPort"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/switchLocalOnly" />
 
             <TextView
                 android:id="@+id/textViewBaudRate"
