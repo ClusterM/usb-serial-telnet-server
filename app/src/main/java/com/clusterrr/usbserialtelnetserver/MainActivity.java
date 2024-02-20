@@ -35,6 +35,7 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, UsbSerialTelnetService.IOnStartStopListener, AdapterView.OnItemSelectedListener {
+    final static String SETTING_LOCAL_ONLY = "local_only";
     final static String SETTING_TCP_PORT = "tcp_port";
     final static String SETTING_BAUD_RATE = "baud_rate";
     final static String SETTING_DATA_BITS = "data_bits";
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean mNeedClose = false;
     private Button mStartButton;
     private Button mStopButton;
+    private Switch mLocalOnly;
     private EditText mTcpPort;
     private EditText mBaudRate;
     private Spinner mDataBits;
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mStartButton = findViewById(R.id.buttonStart);
         mStopButton = findViewById(R.id.buttonStop);
+        mLocalOnly = findViewById(R.id.switchLocalOnly);
         mTcpPort = findViewById(R.id.editTextTcpPort);
         mBaudRate = findViewById(R.id.editTextNumberBaudRate);
         mDataBits = findViewById(R.id.spinnerDataBits);
@@ -176,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent serviceIntent = new Intent(this, UsbSerialTelnetService.class);
         SharedPreferences prefs = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        serviceIntent.putExtra(UsbSerialTelnetService.KEY_LOCAL_ONLY, prefs.getBoolean(SETTING_LOCAL_ONLY, false));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_TCP_PORT, prefs.getInt(SETTING_TCP_PORT, 2323));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_BAUD_RATE, prefs.getInt(SETTING_BAUD_RATE, 115200));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_DATA_BITS, prefs.getInt(SETTING_DATA_BITS, 3) + 5);
@@ -262,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             baudRate = 115200;
         }
         prefs.edit()
+                .putBoolean(SETTING_LOCAL_ONLY, mLocalOnly.isChecked())
                 .putInt(SETTING_TCP_PORT, tcpPort)
                 .putInt(SETTING_BAUD_RATE, baudRate)
                 .putInt(SETTING_DATA_BITS, mDataBits.getSelectedItemPosition())
@@ -277,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean started = isStarted();
         mStartButton.setEnabled(!started);
         mStopButton.setEnabled(started);
+        mLocalOnly.setEnabled(!started);
         mTcpPort.setEnabled(!started);
         mBaudRate.setEnabled(!started);
         mDataBits.setEnabled(!started);
@@ -284,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mParity.setEnabled(!started);
         mNoLocalEcho.setEnabled(!started);
         mRemoveLF.setEnabled(!started);
+        mLocalOnly.setChecked(prefs.getBoolean(SETTING_LOCAL_ONLY, false));
         mTcpPort.setText(String.valueOf(prefs.getInt(SETTING_TCP_PORT, 2323)));
         mBaudRate.setText(String.valueOf(prefs.getInt(SETTING_BAUD_RATE, 115200)));
         mDataBits.setSelection(prefs.getInt(SETTING_DATA_BITS, 3));
@@ -293,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRemoveLF.setChecked(prefs.getBoolean(SETTING_REMOVE_LF, true));
         mAutostart.setSelection(prefs.getInt(SETTING_AUTOSTART, AUTOSTART_DISABLED));
         if (started)
-            mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":"+ mTcpPort.getText());
+            mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + (prefs.getBoolean(SETTING_LOCAL_ONLY, false) ? "127.0.0.1" : UsbSerialTelnetService.getIPAddress()) + ":"+ mTcpPort.getText());
         else
             mStatus.setText(R.string.not_started);
     }

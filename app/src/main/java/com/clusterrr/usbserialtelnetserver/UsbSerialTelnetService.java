@@ -35,6 +35,7 @@ import java.util.List;
 public class UsbSerialTelnetService extends Service {
     final static String TAG = "UsbSerialTelnet";
     final static String ACTION_NEED_TO_START = "need_to_start";
+    final static String KEY_LOCAL_ONLY = "local_only";
     final static String KEY_TCP_PORT = "tcp_port";
     final static String KEY_BAUD_RATE = "baud_rate";
     final static String KEY_DATA_BITS = "data_bits";
@@ -120,7 +121,9 @@ public class UsbSerialTelnetService extends Service {
                             intent.getIntExtra(KEY_DATA_BITS, 8),
                             intent.getIntExtra(KEY_STOP_BITS, UsbSerialPort.STOPBITS_1),
                             intent.getIntExtra(KEY_PARITY, UsbSerialPort.PARITY_NONE));
-                    ServerSocket serverSocket = new ServerSocket(intent.getIntExtra(KEY_TCP_PORT,2323));
+                    ServerSocket serverSocket = intent.getBooleanExtra(KEY_LOCAL_ONLY, false) ?
+                            new ServerSocket(intent.getIntExtra(KEY_TCP_PORT, 2323), -1, InetAddress.getByAddress(new byte[]{127, 0, 0, 1})) : // Explicitly use IPv4, as will default to IPv6 otherwise.
+                            new ServerSocket(intent.getIntExtra(KEY_TCP_PORT, 2323));
                     mUsbSerialThread = new UsbSerialThread(this, serialPort);
                     mTcpServerThread = new TcpServerThread(this, serverSocket);
                     mTcpServerThread.setNoLocalEcho(intent.getBooleanExtra(KEY_NO_LOCAL_ECHO, true));
