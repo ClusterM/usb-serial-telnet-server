@@ -9,7 +9,7 @@ android {
         applicationId "com.clusterrr.usbserialtelnetserver"
         minSdk 19
         targetSdk 33
-        versionCode 8
+        versionCode 9
         versionName "1.5"
     }
 
