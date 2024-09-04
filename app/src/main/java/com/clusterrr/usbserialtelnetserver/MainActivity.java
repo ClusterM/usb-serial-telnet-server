@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -109,8 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(action)
         {
             case UsbSerialTelnetService.ACTION_NEED_TO_START:
-                if (mServiceBinder == null || !mServiceBinder.isStarted())
-                    start();
+                start();
                 break;
             case Intent.ACTION_BOOT_COMPLETED:
             case UsbManager.ACTION_USB_DEVICE_ATTACHED:
@@ -172,6 +172,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void start() {
         saveSettings();
+
+        if (!isDevicePresent(this)) {
+            Toast.makeText(this, getString(R.string.device_not_found), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Intent ignoreOptimization = prepareIntentForWhiteListingOfBatteryOptimization(
                 this, getPackageName(), false);
@@ -306,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public static Intent prepareIntentForWhiteListingOfBatteryOptimization(Context context, String packageName, boolean alsoWhenWhiteListed) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             return null;
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) == PackageManager.PERMISSION_DENIED)
             return null;
@@ -334,8 +339,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public static WhiteListedInBatteryOptimizations getIfAppIsWhiteListedFromBatteryOptimizations(Context context, String packageName) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            return WhiteListedInBatteryOptimizations.IRRELEVANT_OLD_ANDROID_API;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             return WhiteListedInBatteryOptimizations.UNKNOWN_TOO_OLD_ANDROID_API_FOR_CHECKING;
         final PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
