@@ -4,13 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
@@ -123,17 +124,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public static boolean isDevicePresent(Context context)
-    {
+    private void requestDevicePermission(Context context) {
         UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
         if (!availableDrivers.isEmpty()) {
             UsbSerialDriver driver = availableDrivers.get(0);
-            UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
-            return connection != null;
+            UsbDevice device = driver.getDevice();
+            PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbSerialTelnetService.ACTION_NEED_TO_START), PendingIntent.FLAG_IMMUTABLE);
+            manager.requestPermission(device, permissionIntent);
         }
-        return false;
-    }
+    }    
 
     @Override
     protected void onPause() {
@@ -173,9 +173,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void start() {
         saveSettings();
 
-        if (!isDevicePresent(this)) {
-            Toast.makeText(this, getString(R.string.device_not_found), Toast.LENGTH_SHORT).show();
-            return;
+        switch (UsbSerialTelnetService.getDeviceStatus(this)) {
+            case NO_DEVICE:
+                Toast.makeText(this, getString(R.string.device_not_found), Toast.LENGTH_SHORT).show();
+                return;
+            case NO_PERMISSION:
+                requestDevicePermission(this);
+                return;
+            default:
+                break;
         }
 
         Intent ignoreOptimization = prepareIntentForWhiteListingOfBatteryOptimization(

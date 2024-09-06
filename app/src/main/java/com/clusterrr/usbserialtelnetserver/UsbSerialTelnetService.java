@@ -11,6 +11,7 @@ import android.content.pm.ServiceInfo;
 import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.hardware.usb.UsbDevice;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -55,6 +56,12 @@ public class UsbSerialTelnetService extends Service {
     int mTcpPort = 2323;
 
     public UsbSerialTelnetService() {
+    }
+
+    public enum UsbDeviceStatus {
+        NO_DEVICE,
+        NO_PERMISSION,
+        OK
     }
 
     @Override
@@ -163,6 +170,17 @@ public class UsbSerialTelnetService extends Service {
         }
 
         return START_STICKY;
+    }
+
+    public static UsbDeviceStatus getDeviceStatus(Context context) {
+        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
+        if (!availableDrivers.isEmpty()) {
+            UsbSerialDriver driver = availableDrivers.get(0);
+            UsbDevice device = driver.getDevice();
+            return manager.hasPermission(device) ? UsbDeviceStatus.OK :UsbDeviceStatus.NO_PERMISSION;
+        }
+        return UsbDeviceStatus.NO_DEVICE;
     }
 
     public static String getIPAddress() {

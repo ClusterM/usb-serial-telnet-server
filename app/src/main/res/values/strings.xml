@@ -11,6 +11,7 @@
     <string name="parity">Parity</string>
     <string name="started">started</string>
     <string name="device_not_found">Error: USB serial device not found</string>
+    <string name="missing_usb_device_permission">Error: missing USB device permission</string>
     <string name="error">Error:</string>
     <string name="stopped">stopped</string>
     <string name="already_started">Already started</string>
