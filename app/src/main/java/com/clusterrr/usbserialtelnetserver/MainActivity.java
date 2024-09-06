@@ -107,21 +107,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (intent == null) return;
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         String action = intent.getAction();
-        Log.d(UsbSerialTelnetService.TAG, "Received intent: " + action);
+        //Log.d(UsbSerialTelnetService.TAG, "Received intent: " + action);
+
+        if (isStarted()) {
+            return;
+        }
+
         switch(action)
         {
-            case UsbSerialTelnetService.ACTION_NEED_TO_START:
-                start();
-                break;
             case Intent.ACTION_BOOT_COMPLETED:
             case UsbManager.ACTION_USB_DEVICE_ATTACHED:
-                if (!isStarted() && prefs.getInt(SETTING_AUTOSTART, AUTOSTART_DISABLED) != AUTOSTART_DISABLED)
-                {
-                    mNeedClose = prefs.getInt(SETTING_AUTOSTART, AUTOSTART_DISABLED) == AUTOSTART_CLOSE;
-                    start();
-                }
+                mNeedClose = prefs.getInt(SETTING_AUTOSTART, AUTOSTART_DISABLED) == AUTOSTART_CLOSE;
+            /* fall... */
+            case UsbSerialTelnetService.ACTION_NEED_TO_START:
+                break;
+            default:
+                return;
+        }
+
+        switch (UsbSerialTelnetService.getDeviceStatus(this)) {
+            case NO_DEVICE:
+                Log.wtf(UsbSerialTelnetService.TAG, getString(R.string.device_not_found));
+                return;
+            case NO_PERMISSION:
+                Log.e(UsbSerialTelnetService.TAG, getString(R.string.missing_usb_device_permission));
+                Toast.makeText(this, R.string.missing_usb_device_permission, Toast.LENGTH_LONG).show();
+                return;
+            case OK:
                 break;
         }
+        start();
     }
 
     private void requestDevicePermission(Context context) {
@@ -130,8 +145,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!availableDrivers.isEmpty()) {
             UsbSerialDriver driver = availableDrivers.get(0);
             UsbDevice device = driver.getDevice();
-            PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbSerialTelnetService.ACTION_NEED_TO_START), PendingIntent.FLAG_IMMUTABLE);
-            manager.requestPermission(device, permissionIntent);
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.setAction(UsbSerialTelnetService.ACTION_NEED_TO_START);
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            );
+            manager.requestPermission(device, pendingIntent);
         }
     }    
 
