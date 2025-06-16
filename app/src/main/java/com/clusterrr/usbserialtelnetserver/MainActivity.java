@@ -1,6 +1,7 @@
 package com.clusterrr.usbserialtelnetserver;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
@@ -26,7 +27,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,19 +52,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final static int AUTOSTART_CLOSE = 2;
 
     private UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
     private boolean mNeedClose = false;
     private Button mStartButton;
     private Button mStopButton;
-    private Switch mLocalOnly;
+    private SwitchCompat mLocalOnly;
     private EditText mTcpPort;
     private EditText mBaudRate;
     private Spinner mDataBits;
     private Spinner mStopBits;
     private Spinner mParity;
     private TextView mStatus;
-    private Switch mNoLocalEcho;
-    private Switch mRemoveLF;
+    private SwitchCompat mNoLocalEcho;
+    private SwitchCompat mRemoveLF;
     private Spinner mAutostart;
 
     public boolean isStarted() {
