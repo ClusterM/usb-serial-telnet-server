@@ -24,9 +24,11 @@ and devices implementing the CDC/ACM protocol like
 * BBC micro:bit using ARM mbed DAPLink firmware
 * ...
 
-## Download on Google Play
-
-https://play.google.com/store/apps/details?id=com.clusterrr.usbserialtelnetserver
+## Download
+You can download USB Serial Telnet Server:
+* On [Google Play](https://play.google.com/store/apps/details?id=com.clusterrr.usbserialtelnetserver) - best method, but new versions can be delayed
+* At [releases page](https://github.com/ClusterM/usb-serial-telnet-server/releases) - always actual release version
+* Also, you can download automatic interim builds at [http://clusterm.github.io/usb-serial-telnet-server/](http://clusterm.github.io/usb-serial-telnet-server/) - if you want to test some unreleased features, can be buggy, not signed
 
 ## Donate
 * [Become a sponsor on GitHub](https://github.com/sponsors/ClusterM)

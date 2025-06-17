@@ -7,9 +7,15 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  build:
-    name: Build APK
+  build-debug:
+    name: Build debug APK
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +50,33 @@ jobs:
           name: debug-apk
           path: app/build/outputs/apk/debug
 
+  build-release:
+    name: Build release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Build release APK
         run: ./gradlew assembleRelease
 
@@ -52,3 +85,24 @@ jobs:
         with:
           name: release-apk
           path: app/build/outputs/apk/release
+
+  upload-to-pages:
+    needs: [build-release, build-debug]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+    - name: Move files to the root
+      run: find -name *.apk -exec mv {} . \;
+    - name: Remove unused directories
+      run: rm -rf release-apk debug-apk
+    - name: Generate index.html
+      run: "(echo \"<html><head><title>USB Servial Telnet Server</title></head><body><h1>USB Servial Telnet Server</h1>This is automatic interim builds. Install those apk's only if you want to test some unreleased features. Can be buggy, not signed.<br/><br/>Updated: `date`<br/><br/>\" ; for file in *.apk ; do echo \"<a href='$file'>$file</a><br/>\" ; done ; echo \"</body></html>\") > index.html"
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+      if: github.event_name != 'pull_request'
