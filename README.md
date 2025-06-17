@@ -19,10 +19,15 @@ This app uses [usb-serial-for-android  library by mik3y](https://github.com/mik3
 * Silabs CP2102 and all other CP210x
 * Qinheng CH340, CH341A
 
-and devices implementing the CDC/ACM protocol like
+Some other device specific drivers:
+* GsmModem devices, e.g. for Unisoc based Fibocom GSM modems
+* Chrome OS CCD (Closed Case Debugging)
+
+And devices implementing the generic CDC/ACM protocol like:
+* Qinheng CH9102
+* Microchip MCP2221
 * Arduino using ATmega32U4
 * Digispark using V-USB software USB
-* BBC micro:bit using ARM mbed DAPLink firmware
 * ...
 
 ## Download
