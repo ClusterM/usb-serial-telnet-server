@@ -13,7 +13,9 @@ public class ConnectedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(UsbSerialTelnetService.TAG, "Connected device detected");
+        if (BuildConfig.DEBUG) {
+            Log.d(UsbSerialTelnetService.TAG, "Connected device detected");
+        }
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
         if (prefs.getInt(MainActivity.SETTING_AUTOSTART, MainActivity.AUTOSTART_DISABLED) != MainActivity.AUTOSTART_DISABLED)
         {

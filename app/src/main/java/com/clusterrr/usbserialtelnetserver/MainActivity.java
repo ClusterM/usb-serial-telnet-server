@@ -76,7 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(UsbSerialTelnetService.TAG, "Creating activity");
+        if (BuildConfig.DEBUG) {
+            Log.d(UsbSerialTelnetService.TAG, "Creating activity");
+        }
         setContentView(R.layout.activity_main);
 
         mStartButton = findViewById(R.id.buttonStart);
@@ -110,7 +112,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (intent == null) return;
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         String action = intent.getAction();
-        //Log.d(UsbSerialTelnetService.TAG, "Received intent: " + action);
+        if (BuildConfig.DEBUG) {
+            Log.d(UsbSerialTelnetService.TAG, "Received intent: " + action);
+        }
 
         if (isStarted()) {
             return;
@@ -260,7 +264,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             updateSettings();
             SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
             prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, isStarted()).apply();
-            Log.d(UsbSerialTelnetService.TAG, "Service connected");
+            if (BuildConfig.DEBUG) {
+                Log.d(UsbSerialTelnetService.TAG, "Service connected");
+            }
             // Close if autoclose enabled
             if (isStarted() && mNeedClose) {
                 // Delay to prevent race condition
@@ -273,7 +279,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mServiceBinder = null;
-            Log.d(UsbSerialTelnetService.TAG, "Service disconnected");
+            if (BuildConfig.DEBUG) {
+                Log.d(UsbSerialTelnetService.TAG, "Service disconnected");
+            }
         }
     };
 

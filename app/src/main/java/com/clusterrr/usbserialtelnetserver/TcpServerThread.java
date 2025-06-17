@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TcpServerThread extends Thread {
-    private UsbSerialTelnetService mUsbSerialTelnetService;
+    private final UsbSerialTelnetService mUsbSerialTelnetService;
     private ServerSocket mTcpServer;
-    private List<TcpClientThread> mClients;
+    private final List<TcpClientThread> mClients;
     private boolean mNoLocalEcho = true;
     private boolean mRemoveLf = true;
 
@@ -57,6 +57,9 @@ public class TcpServerThread extends Thread {
         for (TcpClientThread client : mClients) {
             try {
                 client.write(data, offset, len);
+                if (BuildConfig.DEBUG) {
+                    Log.d(UsbSerialTelnetService.TAG, "Written " + len + " bytes to the client " + client.getRemoteSocketAddress());
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
                 toRemove.add(client);

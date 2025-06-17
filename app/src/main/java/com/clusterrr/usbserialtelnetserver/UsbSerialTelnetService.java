@@ -258,6 +258,9 @@ public class UsbSerialTelnetService extends Service {
     public void writeSerialPort(byte[] buffer) throws IOException {
         if (mUsbSerialThread == null) return;
         mUsbSerialThread.write(buffer);
+        if (BuildConfig.DEBUG) {
+            Log.d(UsbSerialTelnetService.TAG, "Written " + buffer.length + " bytes to the port");
+        }
     }
 
     public void writeSerialPort(byte[] buffer, int pos, int len) throws IOException {

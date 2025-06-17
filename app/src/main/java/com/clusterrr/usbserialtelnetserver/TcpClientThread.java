@@ -6,18 +6,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TcpClientThread extends Thread {
-    private UsbSerialTelnetService mUsbSerialTelnetService;
-    private TcpServerThread mTcpServerThread;
+    private final UsbSerialTelnetService mUsbSerialTelnetService;
+    private final TcpServerThread mTcpServerThread;
     private Socket mSocket;
     private InputStream mDataInputStream;
     private OutputStream mDataOutputStream;
-    private String mAddress;
-    private List<Byte> mBuffer;
+    private final String mAddress;
+    private final List<Byte> mBuffer;
     private boolean mNoLocalEcho = true;
     private boolean mRemoveLf = true;
     private byte mLastChar = 0;
@@ -57,6 +58,13 @@ public class TcpClientThread extends Thread {
                 if (l <= 0) break; // disconnect
                 for (int i = 0; i < l; i++)
                     mBuffer.add(buffer[i]);
+                if (BuildConfig.DEBUG) {
+                    StringBuilder hexStr = new StringBuilder();
+                    for (int i = 0; i < l; i++) {
+                        hexStr.append(String.format("%02X ", buffer[i]));
+                    }
+                    Log.d(UsbSerialTelnetService.TAG, "Received " + l + " bytes from client: " + hexStr.toString().trim());
+                }
                 proceedBuffer();
             }
         }
@@ -106,7 +114,9 @@ public class TcpClientThread extends Thread {
                 if (i + 2 >= len) break;
                 byte cmd = next;
                 byte opt = mBuffer.get(i + 2);
-                Log.d(UsbSerialTelnetService.TAG, "Telnet command: CMD=" + (cmd >= 0 ? cmd : cmd + 256) + " ARG=" + (opt >= 0 ? opt : opt + 256));
+                if (BuildConfig.DEBUG) {
+                    Log.d(UsbSerialTelnetService.TAG, "Telnet command: CMD=" + (cmd >= 0 ? cmd : cmd + 256) + " ARG=" + (opt >= 0 ? opt : opt + 256));
+                }
                 i += 2;
                 continue;
             }
@@ -124,7 +134,6 @@ public class TcpClientThread extends Thread {
         for (i = 0; i < outputPrimitive.length; i++)
             outputPrimitive[i] = output.get(i);
         mUsbSerialTelnetService.writeSerialPort(outputPrimitive);
-
     }
 
     public void write(byte[] data) throws IOException {
@@ -170,6 +179,10 @@ public class TcpClientThread extends Thread {
         mSocket = null;
         mDataOutputStream = null;
         mDataInputStream = null;
+    }
+
+    public SocketAddress getRemoteSocketAddress() {
+        return mSocket.getRemoteSocketAddress();
     }
 
     public void setNoLocalEcho(boolean noLocalEcho) {

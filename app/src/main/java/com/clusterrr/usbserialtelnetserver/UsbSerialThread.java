@@ -3,14 +3,11 @@ package com.clusterrr.usbserialtelnetserver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.SocketException;
 
 public class UsbSerialThread extends Thread {
     final static int WRITE_TIMEOUT = 1000;
@@ -27,7 +24,7 @@ public class UsbSerialThread extends Thread {
 
     @Override
     public void run() {
-        byte buffer[] = new byte[1024];
+        byte[] buffer = new byte[1024];
 
         try {
             while (true) {
@@ -35,6 +32,13 @@ public class UsbSerialThread extends Thread {
                 // Read data
                 int l = mSerialPort.read(buffer, 0);
                 if (l <= 0) break; // disconnect
+                if (BuildConfig.DEBUG) {
+                    StringBuilder hexStr = new StringBuilder();
+                    for (int i = 0; i < l; i++) {
+                        hexStr.append(String.format("%02X ", buffer[i]));
+                    }
+                    Log.d(UsbSerialTelnetService.TAG, "Received " + l + " bytes from port: " + hexStr.toString().trim());
+                }
                 // Write data
                 mUsbSerialTelnetService.writeClients(buffer, 0, l);
             }
@@ -70,6 +74,6 @@ public class UsbSerialThread extends Thread {
     private void markStopped()
     {
         SharedPreferences prefs = mUsbSerialTelnetService.getApplicationContext().getSharedPreferences(mUsbSerialTelnetService.getString(R.string.app_name), Context.MODE_PRIVATE);
-        prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false).commit();
+        prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, false).apply();
     }
 }
