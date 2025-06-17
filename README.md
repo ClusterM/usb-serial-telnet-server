@@ -29,11 +29,10 @@ and devices implementing the CDC/ACM protocol like
 https://play.google.com/store/apps/details?id=com.clusterrr.usbserialtelnetserver
 
 ## Donate
+* [Become a sponsor on GitHub](https://github.com/sponsors/ClusterM)
 * [Buy Me A Coffee](https://www.buymeacoffee.com/cluster)
 * [Donation Alerts](https://www.donationalerts.com/r/clustermeerkat)
 * [Boosty](https://boosty.to/cluster)
-* BTC: 1MBYsGczwCypXhMBocoDQWxx7KZT2iiwzJ
-* PayPal is not available in Armenia :(
 
 ## Contacts
 * My site (Russian): https://cluster.wtf
