@@ -39,6 +39,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, UsbSerialTelnetService.IOnStartStopListener, AdapterView.OnItemSelectedListener {
     final static String SETTING_LOCAL_ONLY = "local_only";
     final static String SETTING_TCP_PORT = "tcp_port";
+    final static String SETTING_PORT_ID = "port_id";
     final static String SETTING_BAUD_RATE = "baud_rate";
     final static String SETTING_DATA_BITS = "data_bits";
     final static String SETTING_STOP_BITS = "stop_bits";
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mStopButton;
     private SwitchCompat mLocalOnly;
     private EditText mTcpPort;
+    private Spinner mPortId;
     private EditText mBaudRate;
     private Spinner mDataBits;
     private Spinner mStopBits;
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStopButton = findViewById(R.id.buttonStop);
         mLocalOnly = findViewById(R.id.switchLocalOnly);
         mTcpPort = findViewById(R.id.editTextTcpPort);
+        mPortId = findViewById(R.id.spinnerPortId);
         mBaudRate = findViewById(R.id.editTextNumberBaudRate);
         mDataBits = findViewById(R.id.spinnerDataBits);
         mStopBits = findViewById(R.id.spinnerStopBits);
@@ -184,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences prefs = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         prefs.edit()
                 .putInt(SETTING_AUTOSTART, position)
-                .commit();
+                .apply();
     }
 
     @Override
@@ -214,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences prefs = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_LOCAL_ONLY, prefs.getBoolean(SETTING_LOCAL_ONLY, false));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_TCP_PORT, prefs.getInt(SETTING_TCP_PORT, 2323));
+        serviceIntent.putExtra(UsbSerialTelnetService.KEY_PORT_ID, prefs.getInt(SETTING_PORT_ID, 0));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_BAUD_RATE, prefs.getInt(SETTING_BAUD_RATE, 115200));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_DATA_BITS, prefs.getInt(SETTING_DATA_BITS, 3) + 5);
         switch (prefs.getInt(SETTING_STOP_BITS, 0)) {
@@ -255,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mServiceBinder.setOnStartStopListener(MainActivity.this);
             updateSettings();
             SharedPreferences prefs = getApplicationContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-            prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, isStarted()).commit();
+            prefs.edit().putBoolean(UsbSerialTelnetService.KEY_LAST_STATE, isStarted()).apply();
             Log.d(UsbSerialTelnetService.TAG, "Service connected");
             // Close if autoclose enabled
             if (isStarted() && mNeedClose) {
@@ -301,13 +305,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         prefs.edit()
                 .putBoolean(SETTING_LOCAL_ONLY, mLocalOnly.isChecked())
                 .putInt(SETTING_TCP_PORT, tcpPort)
+                .putInt(SETTING_PORT_ID, mPortId.getSelectedItemPosition())
                 .putInt(SETTING_BAUD_RATE, baudRate)
                 .putInt(SETTING_DATA_BITS, mDataBits.getSelectedItemPosition())
                 .putInt(SETTING_STOP_BITS, mStopBits.getSelectedItemPosition())
                 .putInt(SETTING_PARITY, mParity.getSelectedItemPosition())
                 .putBoolean(SETTING_NO_LOCAL_ECHO, mNoLocalEcho.isChecked())
                 .putBoolean(SETTING_REMOVE_LF, mRemoveLF.isChecked())
-                .commit();
+                .apply();
     }
 
     private void updateSettings() {

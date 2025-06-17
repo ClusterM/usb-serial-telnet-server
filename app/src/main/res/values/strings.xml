@@ -19,6 +19,14 @@
     <string name="remove_lf">Convert client\'s CR-LF to CR</string>
     <string name="autostart_on_device_connect">Autostart on device attach</string>
     <string name="local_only">Local Connections Only</string>
+    <string name="port_id">Port ID</string>
+    <string name="invalid_port_id">Invalid port ID. Note: most devices have just one port - #0.</string>
+    <string-array name="port_id">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
     <string-array name="data_bits">
         <item>5</item>
         <item>6</item>

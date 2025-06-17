@@ -40,6 +40,7 @@ public class UsbSerialTelnetService extends Service {
     final static String ACTION_NEED_TO_START = "need_to_start";
     final static String KEY_LOCAL_ONLY = "local_only";
     final static String KEY_TCP_PORT = "tcp_port";
+    final static String KEY_PORT_ID = "port_id";
     final static String KEY_BAUD_RATE = "baud_rate";
     final static String KEY_DATA_BITS = "data_bits";
     final static String KEY_STOP_BITS = "stop_bits";
@@ -127,23 +128,32 @@ public class UsbSerialTelnetService extends Service {
                     PendingIntent mainActivityStartPendingIntent = PendingIntent.getActivity(this, 0, mainActivityStartIntent, PendingIntent.FLAG_IMMUTABLE);
                     manager.requestPermission(driver.getDevice(), mainActivityStartPendingIntent);
                 } else {
-                    UsbSerialPort serialPort = driver.getPorts().get(0); // Most devices have just one port (port 0)
-                    serialPort.open(connection);
-                    serialPort.setParameters(
-                            intent.getIntExtra(KEY_BAUD_RATE, 115200),
-                            intent.getIntExtra(KEY_DATA_BITS, 8),
-                            intent.getIntExtra(KEY_STOP_BITS, UsbSerialPort.STOPBITS_1),
-                            intent.getIntExtra(KEY_PARITY, UsbSerialPort.PARITY_NONE));
-                    ServerSocket serverSocket = intent.getBooleanExtra(KEY_LOCAL_ONLY, false) ?
-                            new ServerSocket(intent.getIntExtra(KEY_TCP_PORT, 2323), -1, InetAddress.getByAddress(new byte[]{127, 0, 0, 1})) : // Explicitly use IPv4, as will default to IPv6 otherwise.
-                            new ServerSocket(intent.getIntExtra(KEY_TCP_PORT, 2323));
-                    mUsbSerialThread = new UsbSerialThread(this, serialPort);
-                    mTcpServerThread = new TcpServerThread(this, serverSocket);
-                    mTcpServerThread.setNoLocalEcho(intent.getBooleanExtra(KEY_NO_LOCAL_ECHO, true));
-                    mTcpServerThread.setRemoveLf(intent.getBooleanExtra(KEY_REMOVE_LF, true));
-                    mUsbSerialThread.start();
-                    mTcpServerThread.start();
-                    success = true;
+                    UsbSerialPort serialPort = null;
+                    try {
+                        serialPort = driver.getPorts().get(intent.getIntExtra(KEY_PORT_ID, 0));
+                    }
+                    catch (IndexOutOfBoundsException ex)
+                    {
+                        message = getString(R.string.invalid_port_id);
+                    }
+                    if (serialPort != null) {
+                        serialPort.open(connection);
+                        serialPort.setParameters(
+                                intent.getIntExtra(KEY_BAUD_RATE, 115200),
+                                intent.getIntExtra(KEY_DATA_BITS, 8),
+                                intent.getIntExtra(KEY_STOP_BITS, UsbSerialPort.STOPBITS_1),
+                                intent.getIntExtra(KEY_PARITY, UsbSerialPort.PARITY_NONE));
+                        ServerSocket serverSocket = intent.getBooleanExtra(KEY_LOCAL_ONLY, false) ?
+                                new ServerSocket(intent.getIntExtra(KEY_TCP_PORT, 2323), -1, InetAddress.getByAddress(new byte[]{127, 0, 0, 1})) : // Explicitly use IPv4, as will default to IPv6 otherwise.
+                                new ServerSocket(intent.getIntExtra(KEY_TCP_PORT, 2323));
+                        mUsbSerialThread = new UsbSerialThread(this, serialPort);
+                        mTcpServerThread = new TcpServerThread(this, serverSocket);
+                        mTcpServerThread.setNoLocalEcho(intent.getBooleanExtra(KEY_NO_LOCAL_ECHO, true));
+                        mTcpServerThread.setRemoveLf(intent.getBooleanExtra(KEY_REMOVE_LF, true));
+                        mUsbSerialThread.start();
+                        mTcpServerThread.start();
+                        success = true;
+                    }
                 }
             }
         }
