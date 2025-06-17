@@ -1,6 +1,10 @@
 package com.clusterrr.usbserialtelnetserver;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 
@@ -24,10 +28,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
@@ -55,19 +55,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
     private final Handler mHandler = new Handler();
     private boolean mNeedClose = false;
-    private Button mStartButton;
-    private Button mStopButton;
+    private AppCompatButton mStartButton;
+    private AppCompatButton mStopButton;
     private SwitchCompat mLocalOnly;
-    private EditText mTcpPort;
-    private Spinner mPortId;
-    private EditText mBaudRate;
-    private Spinner mDataBits;
-    private Spinner mStopBits;
-    private Spinner mParity;
-    private TextView mStatus;
+    private AppCompatEditText mTcpPort;
+    private AppCompatSpinner mPortId;
+    private AppCompatEditText mBaudRate;
+    private AppCompatSpinner mDataBits;
+    private AppCompatSpinner mStopBits;
+    private AppCompatSpinner mParity;
+    private AppCompatTextView mStatus;
     private SwitchCompat mNoLocalEcho;
     private SwitchCompat mRemoveLF;
-    private Spinner mAutostart;
+    private AppCompatSpinner mAutostart;
 
     public boolean isStarted() {
         return mServiceBinder != null && mServiceBinder.isStarted();

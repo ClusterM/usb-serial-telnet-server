@@ -5,275 +5,529 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal"
     tools:context=".MainActivity">
 
-    <Button
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomPanel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?attr/bottomPanelColor"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonStart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonStop"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="VisualLintButtonSize" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonStop"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/stop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/buttonStart" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewStatus"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="Some status, bla-bla. You shouldn't see it."
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/buttonStart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 
-    <ScrollView
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/textViewStatus"
+        app:layout_constraintBottom_toTopOf="@+id/bottomPanel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="400dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textLocalOnly"
-                android:layout_width="0dp"
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/local_only"
-                app:layout_constraintBottom_toBottomOf="@+id/switchLocalOnly"
-                app:layout_constraintEnd_toStartOf="@+id/switchLocalOnly"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/switchLocalOnly" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switchLocalOnly"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textLocalOnly"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/textLocalOnly"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/local_only"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/switchLocalOnly" />
 
-            <TextView
-                android:id="@+id/textViewTcpPort"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textLocalOnlyHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/local_only_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textLocalOnly"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/switchLocalOnly"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchLocalOnly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/tcp_port_to_listen"
-                app:layout_constraintBottom_toBottomOf="@+id/editTextTcpPort"
-                app:layout_constraintEnd_toStartOf="@+id/editTextTcpPort"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/editTextTcpPort" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <EditText
-                android:id="@+id/editTextTcpPort"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="5"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textViewTcpPort"
-                app:layout_constraintTop_toBottomOf="@+id/switchLocalOnly" />
+                <TextView
+                    android:id="@+id/textViewTcpPort"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tcp_port_to_listen"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/editTextTcpPort" />
 
-            <TextView
-                android:id="@+id/textViewPortId"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textViewTcpPortHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tcp_port_to_listen_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textViewTcpPort"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/editTextTcpPort"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/editTextTcpPort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="5"
+                    android:ems="3"
+                    android:textAlignment="viewEnd"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/port_id"
-                app:layout_constraintBottom_toBottomOf="@+id/spinnerPortId"
-                app:layout_constraintEnd_toStartOf="@+id/spinnerPortId"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/spinnerPortId" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <Spinner
-                android:id="@+id/spinnerPortId"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:entries="@array/port_id"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textViewPortId"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTcpPort" />
+                <TextView
+                    android:id="@+id/textViewPortId"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/port_id"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerPortId" />
 
-            <TextView
-                android:id="@+id/textViewBaudRate"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textViewPortIdHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/port_id_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textViewPortId"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerPortId"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinnerPortId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/port_id"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/baud_rate"
-                app:layout_constraintBottom_toBottomOf="@+id/editTextNumberBaudRate"
-                app:layout_constraintEnd_toStartOf="@+id/editTextNumberBaudRate"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/editTextNumberBaudRate" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <EditText
-                android:id="@+id/editTextNumberBaudRate"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="7"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textViewBaudRate"
-                app:layout_constraintTop_toBottomOf="@+id/spinnerPortId" />
+                <TextView
+                    android:id="@+id/textViewBaudRate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/baud_rate"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/editTextNumberBaudRate" />
 
-            <TextView
-                android:id="@+id/textViewDataBits"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textViewBaudRateHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/baud_rate_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textViewBaudRate"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/editTextNumberBaudRate"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/editTextNumberBaudRate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="7"
+                    android:ems="4"
+                    android:textAlignment="viewEnd"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/data_bits"
-                app:layout_constraintBottom_toBottomOf="@+id/spinnerDataBits"
-                app:layout_constraintEnd_toStartOf="@+id/spinnerDataBits"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/spinnerDataBits" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <Spinner
-                android:id="@+id/spinnerDataBits"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:entries="@array/data_bits"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textViewDataBits"
-                app:layout_constraintTop_toBottomOf="@+id/editTextNumberBaudRate" />
+                <TextView
+                    android:id="@+id/textViewDataBits"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/data_bits"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerDataBits" />
 
-            <TextView
-                android:id="@+id/textViewStopBits"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textViewDataBitsHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/data_bits_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textViewDataBits"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerDataBits"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinnerDataBits"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/data_bits"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/stop_bits"
-                app:layout_constraintBottom_toBottomOf="@+id/spinnerStopBits"
-                app:layout_constraintEnd_toStartOf="@+id/spinnerStopBits"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/spinnerStopBits" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <Spinner
-                android:id="@+id/spinnerStopBits"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:entries="@array/stop_bits"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textViewStopBits"
-                app:layout_constraintTop_toBottomOf="@+id/spinnerDataBits" />
+                <TextView
+                    android:id="@+id/textViewStopBits"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stop_bits"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerStopBits" />
 
-            <TextView
-                android:id="@+id/textViewParity"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textViewStopBitsHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stop_bits_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textViewStopBits"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerStopBits"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinnerStopBits"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/stop_bits"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/parity"
-                app:layout_constraintBottom_toBottomOf="@+id/spinnerParity"
-                app:layout_constraintEnd_toStartOf="@+id/spinnerParity"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/spinnerParity" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <Spinner
-                android:id="@+id/spinnerParity"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:entries="@array/parity"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textViewParity"
-                app:layout_constraintTop_toBottomOf="@+id/spinnerStopBits" />
+                <TextView
+                    android:id="@+id/textViewParity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/parity"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerParity" />
 
-            <TextView
-                android:id="@+id/textNoLocalEcho"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textViewParityHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/parity_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textViewParity"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerParity"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinnerParity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/parity"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/no_local_echo"
-                app:layout_constraintBottom_toBottomOf="@+id/switchNoLocalEcho"
-                app:layout_constraintEnd_toStartOf="@+id/switchNoLocalEcho"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/switchNoLocalEcho" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switchNoLocalEcho"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textNoLocalEcho"
-                app:layout_constraintTop_toBottomOf="@+id/spinnerParity" />
+                <TextView
+                    android:id="@+id/textNoLocalEcho"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_local_echo"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/switchNoLocalEcho" />
 
-            <TextView
-                android:id="@+id/textRemoveLf"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textNoLocalEchoHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_local_echo_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textNoLocalEcho"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/switchNoLocalEcho"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchNoLocalEcho"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/remove_lf"
-                app:layout_constraintBottom_toBottomOf="@+id/switchRemoveLf"
-                app:layout_constraintEnd_toStartOf="@+id/switchRemoveLf"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/switchRemoveLf" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switchRemoveLf"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textRemoveLf"
-                app:layout_constraintTop_toBottomOf="@+id/switchNoLocalEcho" />
+                <TextView
+                    android:id="@+id/textRemoveLf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove_lf"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/switchRemoveLf" />
 
-            <TextView
-                android:id="@+id/textAutostart"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textRemoveLfHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove_lf_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textRemoveLf"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/switchRemoveLf"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchRemoveLf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/autostart_on_device_connect"
-                app:layout_constraintBottom_toBottomOf="@+id/spinnerAutostart"
-                app:layout_constraintEnd_toStartOf="@+id/spinnerAutostart"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/spinnerAutostart" />
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
 
-            <Spinner
-                android:id="@+id/spinnerAutostart"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:entries="@array/autostart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textAutostart"
-                app:layout_constraintTop_toBottomOf="@+id/switchRemoveLf" />
+                <TextView
+                    android:id="@+id/textAutostart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/autostart_on_device_connect"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerAutostart" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+                <TextView
+                    android:id="@+id/textAutostartHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/autostart_on_device_connect_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textAutostart"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/spinnerAutostart"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinnerAutostart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/autostart"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
