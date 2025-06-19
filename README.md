@@ -2,8 +2,8 @@
 Android application that binds a USB serial converter to a Telnet client
 
 Just connect a USB serial adapter into USB OTG port of your Android device, start this app and connect to it using any Telnet client like
-* [JuiceSSH](https://play.google.com/store/apps/details?id=com.sonelli.juicessh) using the same Android device (connect to localhost)
-* [Termux](https://play.google.com/store/apps/details?id=com.termux) and standard Linux telnet client (also, connect to localhost)
+* [JuiceSSH](https://play.google.com/store/apps/details?id=com.sonelli.juicessh) using the same Android device (connect to the localhost)
+* [Termux](https://play.google.com/store/apps/details?id=com.termux) and standard Linux telnet client (also, connect to the localhost)
 * Telnet client on a computer on the same network (connect over Wi-Fi)
 
 ![Screenshot](https://user-images.githubusercontent.com/4236181/170989042-b82958ff-372b-4733-bbcb-ce98ebf331fc.png)
