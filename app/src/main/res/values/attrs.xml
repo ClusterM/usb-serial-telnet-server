@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="bottomPanelColor" format="color" />
+    <attr name="bottomPanelDividerColor" format="color" />
+    <attr name="titleColor" format="color" />
+    <attr name="titleTextColor" format="color" />
 </resources>
