@@ -33,6 +33,7 @@ And devices implementing the generic CDC/ACM protocol like:
 ## Download
 You can download USB Serial Telnet Server:
 * On [Google Play](https://play.google.com/store/apps/details?id=com.clusterrr.usbserialtelnetserver) - best method, but new versions can be delayed
+* At [IzzyOnDroid](https://apt.izzysoft.de/packages/com.clusterrr.usbserialtelnetserver) - new versions usually within 24 hours of their release
 * At [releases page](https://github.com/ClusterM/usb-serial-telnet-server/releases) - always actual release version
 * Also, you can download automatic interim builds at [http://clusterm.github.io/usb-serial-telnet-server/](http://clusterm.github.io/usb-serial-telnet-server/) - if you want to test some unreleased features, can be buggy, not signed
 
