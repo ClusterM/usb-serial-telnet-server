@@ -24,7 +24,7 @@ public class UsbSerialThread extends Thread {
 
     @Override
     public void run() {
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[mSerialPort.getReadEndpoint().getMaxPacketSize()];
 
         try {
             while (true) {
