@@ -1,4 +1,4 @@
-# USB Serial Telnet Server
+# USB Serial Telnet Server raw mode
 Android application that binds a USB serial converter to a Telnet client
 
 Just connect a USB serial adapter into USB OTG port of your Android device, start this app and connect to it using any Telnet client like
