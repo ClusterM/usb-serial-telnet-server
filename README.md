@@ -1,6 +1,12 @@
 # USB Serial Telnet Server raw mode
 Android application that binds a USB serial converter to a Telnet client
 
+## Fork modifications
+
+This fork adds:
+* **Raw mode** (new switch in settings) – disables Telnet IAC/`0xFF` escaping, CR-LF conversion, and the initial Telnet negotiation bytes, so the bridge forwards bytes 1:1 in both directions. Needed for binary tools like `esptool` that expect a raw, unmodified byte stream over the TCP socket (the standard Telnet framing corrupts firmware binaries, which contain frequent `0xFF` bytes).
+* **Espressif vendor ID (`0x303A` / `12346`) added to `usb_device_filter.xml`**, so boards with native USB (ESP32-C3/S3/C6/H2...) are recognized for auto-launch/auto-permission when plugged in, same as the other USB-serial chips already listed.
+
 Just connect a USB serial adapter into USB OTG port of your Android device, start this app and connect to it using any Telnet client like
 * [JuiceSSH](https://play.google.com/store/apps/details?id=com.sonelli.juicessh) using the same Android device (connect to the localhost)
 * [Termux](https://play.google.com/store/apps/details?id=com.termux) and standard Linux telnet client (also, connect to the localhost)
