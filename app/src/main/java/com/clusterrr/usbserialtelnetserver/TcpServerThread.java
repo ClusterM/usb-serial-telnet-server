@@ -15,6 +15,7 @@ public class TcpServerThread extends Thread {
     private final List<TcpClientThread> mClients;
     private boolean mNoLocalEcho = true;
     private boolean mRemoveLf = true;
+    private boolean mRawMode = false;
 
     public TcpServerThread(UsbSerialTelnetService usbSerialTelnetService, ServerSocket tcpServer) {
         mUsbSerialTelnetService = usbSerialTelnetService;
@@ -32,6 +33,7 @@ public class TcpServerThread extends Thread {
                 TcpClientThread client = new TcpClientThread(mUsbSerialTelnetService, this, socket);
                 client.setNoLocalEcho(mNoLocalEcho);
                 client.setRemoveLf(mRemoveLf);
+                client.setRawMode(mRawMode);
                 client.start();
                 mClients.add(client);
             }
@@ -95,5 +97,9 @@ public class TcpServerThread extends Thread {
 
     public void setRemoveLf(boolean removeLf) {
         mRemoveLf = removeLf;
+    }
+
+    public void setRawMode(boolean rawMode) {
+        mRawMode = rawMode;
     }
 }
