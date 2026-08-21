@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             case NO_PERMISSION:
                 Log.e(UsbSerialTelnetService.TAG, getString(R.string.missing_usb_device_permission));
-                Toast.makeText(this, R.string.missing_usb_device_permission, Toast.LENGTH_LONG).show();
+                requestDevicePermission(this);
                 return;
             case OK:
                 break;
