@@ -30,6 +30,8 @@
     <string name="parity_help">Set the parity for the serial connection, usually\u00A0\"none\"</string>
     <string name="no_local_echo_help">Disable local echo in the terminal for remote-only\u00A0output</string>
     <string name="remove_lf_help">Replace CR-LF with LF in case if your device expects\u00A0LF\u00A0only</string>
+    <string name="raw_mode">Raw mode (binary, no Telnet processing)</string>
+    <string name="raw_mode_help">Disables Telnet IAC/0xFF escaping and negotiation. Use this for binary tools like esptool that expect an unmodified byte stream.</string>
     <string name="autostart_on_device_connect_help">Automatically start the server when a\u00A0device\u00A0is\u00A0connected</string>
     <string-array name="port_id">
         <item>Port #0</item>

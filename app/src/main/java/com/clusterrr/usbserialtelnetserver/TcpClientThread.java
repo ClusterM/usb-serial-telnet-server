@@ -21,6 +21,7 @@ public class TcpClientThread extends Thread {
     private final List<Byte> mBuffer;
     private boolean mNoLocalEcho = true;
     private boolean mRemoveLf = true;
+    private boolean mRawMode = false;
     private byte mLastChar = 0;
 
     final static byte CMD_WILL = (byte) 0xFB;
@@ -45,7 +46,7 @@ public class TcpClientThread extends Thread {
         byte buffer[] = new byte[1024];
 
         try {
-            if (mNoLocalEcho) {
+            if (mNoLocalEcho && !mRawMode) {
                 mDataOutputStream.write(new byte[]{(byte) 0xFF, CMD_WILL, OP_ECHO}); // Will Echo
                 mDataOutputStream.write(new byte[]{(byte) 0xFF, CMD_DONT, OP_ECHO}); // Don't Echo
                 mDataOutputStream.write(new byte[]{(byte) 0xFF, CMD_DO, OP_SUPPRESS}); // Do Suppress Go Ahead
@@ -92,6 +93,18 @@ public class TcpClientThread extends Thread {
         int len = mBuffer.size();
         int i = 0;
         List<Byte> output = new ArrayList<>();
+        if (mRawMode) {
+            // Raw mode: forward every byte unmodified, no Telnet IAC parsing,
+            // no CR-LF conversion. Needed for binary protocols like esptool.
+            for (i = 0; i < len; i++)
+                output.add(mBuffer.get(i));
+            mBuffer.subList(0, i).clear();
+            byte[] rawOutput = new byte[output.size()];
+            for (i = 0; i < rawOutput.length; i++)
+                rawOutput[i] = output.get(i);
+            mUsbSerialTelnetService.writeSerialPort(rawOutput);
+            return;
+        }
         for (; i < len; i++) {
             byte b = mBuffer.get(i);
             if (b == 0) continue;
@@ -142,6 +155,11 @@ public class TcpClientThread extends Thread {
 
     public void write(byte[] data, int offset, int len) throws IOException {
         if (mDataOutputStream == null) return;
+        if (mRawMode) {
+            // Raw mode: send bytes exactly as received, no 0xFF doubling.
+            mDataOutputStream.write(data, offset, len);
+            return;
+        }
         List<Byte> output = new ArrayList<>();
         for (int i = 0; i < len; i++){
             byte b = data[offset + i];
@@ -191,5 +209,9 @@ public class TcpClientThread extends Thread {
 
     public void setRemoveLf(boolean removeLf) {
         mRemoveLf = removeLf;
+    }
+
+    public void setRawMode(boolean rawMode) {
+        mRawMode = rawMode;
     }
 }

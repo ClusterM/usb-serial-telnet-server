@@ -47,6 +47,7 @@ public class UsbSerialTelnetService extends Service {
     final static String KEY_PARITY = "parity";
     final static String KEY_NO_LOCAL_ECHO = "no_local_echo";
     final static String KEY_REMOVE_LF = "remove_lf";
+    final static String KEY_RAW_MODE = "raw_mode";
     final static String KEY_LAST_STATE = "last_state";
 
     boolean mStarted = false;
@@ -148,8 +149,10 @@ public class UsbSerialTelnetService extends Service {
                                 new ServerSocket(intent.getIntExtra(KEY_TCP_PORT, 2323));
                         mUsbSerialThread = new UsbSerialThread(this, serialPort);
                         mTcpServerThread = new TcpServerThread(this, serverSocket);
-                        mTcpServerThread.setNoLocalEcho(intent.getBooleanExtra(KEY_NO_LOCAL_ECHO, true));
-                        mTcpServerThread.setRemoveLf(intent.getBooleanExtra(KEY_REMOVE_LF, true));
+                        boolean rawMode = intent.getBooleanExtra(KEY_RAW_MODE, false);
+                        mTcpServerThread.setNoLocalEcho(!rawMode && intent.getBooleanExtra(KEY_NO_LOCAL_ECHO, true));
+                        mTcpServerThread.setRemoveLf(!rawMode && intent.getBooleanExtra(KEY_REMOVE_LF, true));
+                        mTcpServerThread.setRawMode(rawMode);
                         mUsbSerialThread.start();
                         mTcpServerThread.start();
                         success = true;

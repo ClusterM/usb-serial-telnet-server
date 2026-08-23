@@ -510,6 +510,50 @@
                 android:paddingHorizontal="16dp">
 
                 <TextView
+                    android:id="@+id/textRawMode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/raw_mode"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/switchRawMode" />
+
+                <TextView
+                    android:id="@+id/textRawModeHelp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/raw_mode_help"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:layout_constraintTop_toBottomOf="@id/textRawMode"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/switchRawMode"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchRawMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp">
+
+                <TextView
                     android:id="@+id/textAutostart"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

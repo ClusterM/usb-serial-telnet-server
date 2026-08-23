@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final static String SETTING_PARITY = "parity";
     final static String SETTING_NO_LOCAL_ECHO = "no_local_echo";
     final static String SETTING_REMOVE_LF = "remove_lf";
+    final static String SETTING_RAW_MODE = "raw_mode";
     final static String SETTING_AUTOSTART = "autostart";
 
     final static int AUTOSTART_DISABLED = 0;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AppCompatTextView mStatus;
     private SwitchCompat mNoLocalEcho;
     private SwitchCompat mRemoveLF;
+    private SwitchCompat mRawMode;
     private AppCompatSpinner mAutostart;
 
     public boolean isStarted() {
@@ -93,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStatus = findViewById(R.id.textViewStatus);
         mNoLocalEcho = findViewById(R.id.switchNoLocalEcho);
         mRemoveLF = findViewById(R.id.switchRemoveLf);
+        mRawMode = findViewById(R.id.switchRawMode);
         mAutostart = findViewById(R.id.spinnerAutostart);
 
         mAutostart.setOnItemSelectedListener(this);
@@ -238,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_PARITY, prefs.getInt(SETTING_PARITY, 0));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_NO_LOCAL_ECHO, prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_REMOVE_LF, prefs.getBoolean(SETTING_REMOVE_LF, true));
+        serviceIntent.putExtra(UsbSerialTelnetService.KEY_RAW_MODE, prefs.getBoolean(SETTING_RAW_MODE, false));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
         } else {
@@ -320,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .putInt(SETTING_PARITY, mParity.getSelectedItemPosition())
                 .putBoolean(SETTING_NO_LOCAL_ECHO, mNoLocalEcho.isChecked())
                 .putBoolean(SETTING_REMOVE_LF, mRemoveLF.isChecked())
+                .putBoolean(SETTING_RAW_MODE, mRawMode.isChecked())
                 .apply();
     }
 
@@ -336,6 +341,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mParity.setEnabled(!started);
         mNoLocalEcho.setEnabled(!started);
         mRemoveLF.setEnabled(!started);
+        mRawMode.setEnabled(!started);
         mLocalOnly.setChecked(prefs.getBoolean(SETTING_LOCAL_ONLY, false));
         mTcpPort.setText(String.valueOf(prefs.getInt(SETTING_TCP_PORT, 2323)));
         mBaudRate.setText(String.valueOf(prefs.getInt(SETTING_BAUD_RATE, 115200)));
@@ -344,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mParity.setSelection(prefs.getInt(SETTING_PARITY, 0));
         mNoLocalEcho.setChecked(prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
         mRemoveLF.setChecked(prefs.getBoolean(SETTING_REMOVE_LF, true));
+        mRawMode.setChecked(prefs.getBoolean(SETTING_RAW_MODE, false));
         mAutostart.setSelection(prefs.getInt(SETTING_AUTOSTART, AUTOSTART_DISABLED));
         if (started)
             mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + (prefs.getBoolean(SETTING_LOCAL_ONLY, false) ? "127.0.0.1" : UsbSerialTelnetService.getIPAddress()) + ":"+ mTcpPort.getText());
